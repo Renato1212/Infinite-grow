@@ -33,6 +33,18 @@ production once and then delete those days.
 The build is green and the app is live; it cannot reach a database or sign you
 in until these are done.
 
+Each step happens in someone else's dashboard, so rather than doing them and
+hoping, do them and then ask the deployment what it sees:
+
+```
+https://deliberate-practice.vercel.app/api/health
+```
+
+That runs inside the deployment, so it reports what **Vercel** actually holds —
+which is the thing a check on your own machine cannot tell you. It names every
+problem and what to do about it. `npm run doctor` runs the same checks against
+your local `.env.local`, in a nicer format.
+
 ### 1. The database password → `DATABASE_URL`
 
 The app talks to Postgres directly (Drizzle over postgres-js), because that is
@@ -85,6 +97,9 @@ Redeploy after adding them.
 ### 3. Auth redirect URLs
 
 Without this the magic link in your inbox will send you to `localhost:3000`.
+This is the one step nothing can verify for you — the allowlist is not readable
+back through any API — so the health check flags it as yours to confirm. The
+test is simply whether the link lands you on the deployed host.
 
 Supabase dashboard → **Authentication → URL Configuration**:
 
@@ -102,6 +117,31 @@ Then, because this is a private journal and Supabase allows public sign-ups by
 default: **Authentication → Sign In / Providers → Email → disable "Allow new
 users to sign up"**. Your existing account keeps working; nobody else can make
 one.
+
+---
+
+## Checking that it worked
+
+```bash
+npm run doctor          # your .env.local
+curl https://deliberate-practice.vercel.app/api/health   # what Vercel holds
+```
+
+Both report the same checks: the Supabase URL and anon key agree and the project
+answers; whether sign-ups are still open; the database is reachable and over TLS;
+every migration is applied; RLS is forced on all 35 tables with four policies
+each; the shared catalogue is populated; the private `media` bucket exists.
+
+Neither ever prints a password, a key, or the driver's own error text — a
+`postgres-js` failure carries the host and role in its message, so causes are
+mapped to a fixed set of sentences instead. `password authentication failed` is
+the one you want when you have pasted the wrong password.
+
+The endpoint returns full detail only while the app is **not** yet working,
+which is when you need it and when there is nothing behind it to protect. Once
+it is green, an anonymous request gets `{"status":"ok"}` and nothing else;
+signed in, you see everything. A blocking problem also sets the status to 503,
+so an uptime monitor notices.
 
 ---
 

@@ -7,12 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:push": "tsx scripts/apply-migrations.ts",
     "db:seed": "tsx scripts/seed.ts",
+    "doctor": "tsx scripts/doctor.ts",
     "e2e": "playwright test"
   },
   "dependencies": {

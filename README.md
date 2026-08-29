@@ -14,7 +14,10 @@ across days six months from now.
 live in eu-west-3 with the full schema, RLS, triggers, seeded catalogue and media
 bucket, verified end to end against the real database; Vercel builds from this
 repository on every push. Three steps remain before you can sign in —
-[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) has them.
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) has them, and
+[`/api/health`](https://deliberate-practice.vercel.app/api/health) tells you
+which of them are still outstanding from inside the deployment itself, rather
+than from your machine.
 
 ## Running it
 
@@ -47,6 +50,7 @@ variable can switch on in production is not a bypass worth having.
 ### Tests
 
 ```bash
+npm run doctor                             # is this configuration actually usable?
 npm test                                   # domain logic; DB suites skip without a database
 DATABASE_URL=postgresql://... npm test     # adds the RLS and SQL/TS parity suites
 npm run e2e                                # Playwright; starts its own dev server if none is running
@@ -106,7 +110,7 @@ name exactly what is missing rather than showing an unexplained partial circle.
 
 ## Schema
 
-Ten migration files in `db/migrations/`, applied in filename order by
+Eleven migration files in `db/migrations/`, applied in filename order by
 `scripts/apply-migrations.ts` and recorded in `schema_migrations`. Migrations are files;
 nothing is applied by hand.
 
