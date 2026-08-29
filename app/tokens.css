@@ -42,8 +42,8 @@
   --accent-line:   rgb(37 89 204 / 0.30);
   --focus:         #2559cc;
 
-  --pos:           #2f7a56;
-  --pos-quiet:     rgb(47 122 86 / 0.10);
+  --pos:           #2b7050;
+  --pos-quiet:     rgb(43 112 80 / 0.10);
   --neg:           #a33b3b;
   --neg-quiet:     rgb(163 59 59 / 0.10);
   --warn:          #8a6320;
@@ -127,8 +127,8 @@
 
     --pos: #5aa987;
     --pos-quiet: rgb(90 169 135 / 0.14);
-    --neg: #d97070;
-    --neg-quiet: rgb(217 112 112 / 0.14);
+    --neg: #dd7a7a;
+    --neg-quiet: rgb(221 122 122 / 0.14);
     --warn: #c9a45c;
     --warn-quiet: rgb(201 164 92 / 0.14);
 
@@ -158,7 +158,7 @@
   --focus: #7aa3ff; --text-on-accent: #06101f;
 
   --pos: #5aa987; --pos-quiet: rgb(90 169 135 / 0.14);
-  --neg: #d97070; --neg-quiet: rgb(217 112 112 / 0.14);
+  --neg: #dd7a7a; --neg-quiet: rgb(221 122 122 / 0.14);
   --warn: #c9a45c; --warn-quiet: rgb(201 164 92 / 0.14);
 
   --dom-economic_data: #cfa254; --dom-central_banks: #a68fdd;

@@ -28,22 +28,7 @@ async function populatedDay(page: Page): Promise<string> {
   return date ?? new Date().toISOString().slice(0, 10);
 }
 
-async function violationsOn(page: Page, path: string) {
-  // axe reads computed colours, and an element caught mid-transition reports a
-  // blend of its start and end colour rather than either. Settling animations
-  // first removes that source of noise without weakening the assertion: the
-  // colours that matter are the ones the element comes to rest at.
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(path, { waitUntil: "networkidle" });
-  await page.addStyleTag({
-    content: `*, *::before, *::after {
-      transition-duration: 0s !important;
-      animation-duration: 0s !important;
-      animation-delay: 0s !important;
-    }`,
-  });
-  await page.waitForTimeout(500);
-
+async function axeReport(page: Page): Promise<string> {
   const { violations } = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
     .analyze();
@@ -61,8 +46,25 @@ async function violationsOn(page: Page, path: string) {
     .join("\n\n");
 }
 
+async function violationsOn(page: Page, path: string) {
+  // axe reads computed colours, and an element caught mid-transition reports a
+  // blend of its start and end colour rather than either. Settling animations
+  // first removes that source of noise without weakening the assertion: the
+  // colours that matter are the ones the element comes to rest at.
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(path, { waitUntil: "networkidle" });
+  await page.addStyleTag({
+    content: `*, *::before, *::after {
+      transition-duration: 0s !important;
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }`,
+  });
+  await page.waitForTimeout(500);
+  return axeReport(page);
+}
+
 const STATIC_PAGES: [name: string, path: string][] = [
-  ["trades", "/trades"],
   ["study", "/study"],
   ["reviews", "/reviews"],
   ["library", "/library"],
@@ -78,6 +80,30 @@ const DAY_PAGES: [name: string, suffix: string][] = [
 for (const theme of ["light", "dark"] as const) {
   test.describe(`${theme} theme`, () => {
     test.use({ colorScheme: theme });
+
+    /**
+     * The trades table colours P&L, so whether the row under the keyboard
+     * cursor holds a winner or a loser changes which colours are measured
+     * against the highlight. Leaving that to whichever trade happens to be
+     * newest is not a test — a losing first row is exactly the case that
+     * slipped through once. Sort both ways and check both.
+     */
+    test("trades has no accessibility violations, winners or losers first", async ({ page }) => {
+      const reports: string[] = [await violationsOn(page, "/trades")];
+
+      const net = page.getByRole("button", { name: /^Net/ });
+      if (await net.count()) {
+        for (const label of ["best first", "worst first"]) {
+          await net.first().click();
+          await page.waitForTimeout(200);
+          const found = await axeReport(page);
+          if (found) reports.push(`[${label}] ${found}`);
+        }
+      }
+
+      const report = reports.filter(Boolean).join("\n\n");
+      expect(report, report || "clean").toBe("");
+    });
 
     for (const [name, path] of STATIC_PAGES) {
       test(`${name} has no accessibility violations`, async ({ page }) => {
