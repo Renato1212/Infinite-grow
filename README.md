@@ -94,7 +94,7 @@ name exactly what is missing rather than showing an unexplained partial circle.
 
 ## Schema
 
-Nine migration files in `db/migrations/`, applied in filename order by
+Ten migration files in `db/migrations/`, applied in filename order by
 `scripts/apply-migrations.ts` and recorded in `schema_migrations`. Migrations are files;
 nothing is applied by hand.
 
@@ -109,6 +109,8 @@ nothing is applied by hand.
 | `0006_derivations` | Everything the brief says must never be typed by hand |
 | `0007_views` | `trade_facts`, `level_facts`, `day_facts` |
 | `0008_seed_reference` | The 21 instruments, five domains, 24 level types |
+| `0009_rule_uniqueness` | One canonical spelling per rule, so adherence cannot double-count |
+| `0010_media_storage` | The private `media` bucket and its owner-scoped policies |
 
 ### What the database computes for you
 

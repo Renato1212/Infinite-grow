@@ -1,10 +1,11 @@
 # Deployment
 
-The Supabase project is provisioned and its schema is live. Vercel is linked to
-this repository and redeploys on every push.
+The Supabase project is provisioned and its whole schema is live.
 
-What is **not** done — because it needs a secret only you can read, and two
-settings only you can change — is listed under "Four things to finish" below.
+Vercel is where this stops short: a project was created, but the connection used
+to create it cannot deploy or even read it back, so the Git link has to be
+finished by hand. That, plus a secret only you can read and two settings only
+you can change, is what "Five things to finish" covers.
 
 ---
 
@@ -16,7 +17,7 @@ settings only you can change — is listed under "Four things to finish" below.
 | Schema | 35 tables, 3 views, RLS forced on all 35 with 140 policies, all triggers and the seeded catalogue (21 instruments, 5 edge domains, 24 level types) |
 | Storage | private `media` bucket, 500 MB per file, owner-scoped policies |
 | Security advisors | zero findings |
-| Vercel | project linked to `Renato1212/Infinite-grow`, production branch `claude/build-this-3pl69t` |
+| Vercel | project `deliberate-practice` created (`prj_fZBambI6XiIj6WV3SvBn8HsIinbP`) — **but see step 0**: its Git link could not be completed from here |
 
 **No sample data was seeded into production, deliberately.** This app exists to
 build one honest dataset about your own trading; forty days of invented trades
@@ -27,7 +28,26 @@ production once and then delete those days.
 
 ---
 
-## Four things to finish
+## Five things to finish
+
+### 0. Connect the repository in Vercel
+
+A Vercel project named `deliberate-practice` was created, but the connection
+used to create it cannot read it back or deploy it — the API answers 409
+"already exists" to a re-create, 404 to a fetch, and 403 to listing its
+deployments. That is a scope limit on the integration, not something the code
+can work around, so the Git link has to be finished in the dashboard.
+
+Vercel dashboard → the `deliberate-practice` project → **Settings → Git →
+Connect Git Repository** → `Renato1212/Infinite-grow`, production branch
+`claude/build-this-3pl69t`.
+
+If the project is not visible or is in a state you would rather not inherit,
+delete it and use **Add New → Project → Import** on the same repository instead;
+nothing outside Vercel depends on that project's identity.
+
+Framework detection needs no help: it is a stock Next.js app at the repository
+root, and `npm run build` passes on this commit.
 
 ### 1. The database password → `DATABASE_URL`
 
@@ -117,6 +137,7 @@ Never edit an applied migration; add a new one.
 
 ## Moving production to `main`
 
-Production currently builds from `claude/build-this-3pl69t`, the branch this was
-developed on. If you merge it to a `main` branch, change Vercel → Settings →
-Git → Production Branch to match.
+Production is set to build from `claude/build-this-3pl69t`, the branch this was
+developed on, because that is the repository's only branch — it was empty before
+this work. If you merge it to a `main` branch, change Vercel → Settings → Git →
+Production Branch to match.
