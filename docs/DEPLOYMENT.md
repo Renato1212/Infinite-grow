@@ -44,9 +44,25 @@ Supabase dashboard → **Project Settings → Database → Connection string →
 using the **Session pooler** (port 5432). If you never saved the password, use
 **Reset database password** on the same page.
 
+For Vercel, use the **transaction pooler on port 6543** — it is built for many
+short-lived instances, and the app is already compatible (`prepare: false`, and
+every query runs inside one transaction, so nothing depends on session state):
+
 ```
-DATABASE_URL=postgresql://postgres.zggckkxrnaysruvcmqng:YOUR-PASSWORD@aws-0-eu-west-3.pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.zggckkxrnaysruvcmqng:YOUR-PASSWORD@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
 ```
+
+Use port **5432** (session pooler) when running migrations or the seed from your
+own machine; DDL is happier there.
+
+Two things that otherwise cost an afternoon:
+
+- If you set the password yourself, avoid `@ : / ? # [ ] %`. They are
+  URL-reserved and break the connection string unless percent-encoded. Letting
+  Supabase generate one sidesteps it.
+- TLS is handled for you. postgres-js defaults to no TLS and Supabase refuses a
+  plaintext connection, so `lib/db/ssl.ts` requires it for any non-local host.
+  An explicit `?sslmode=` in the URL still wins, in either direction.
 
 ### 2. The rest of the environment variables
 

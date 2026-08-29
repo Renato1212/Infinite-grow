@@ -13,12 +13,13 @@
  */
 import "dotenv/config";
 import postgres from "postgres";
+import { sslFor } from "../lib/db/ssl";
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is not set.");
 
 const DAYS = Number(process.env.SEED_DAYS ?? 40);
-const sql = postgres(url, { max: 1, onnotice: () => {} });
+const sql = postgres(url, { max: 1, ssl: sslFor(url), onnotice: () => {} });
 
 /* ── deterministic randomness ──────────────────────────────────────────── */
 let state = 0x2f6df6;

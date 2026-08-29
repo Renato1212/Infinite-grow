@@ -5,12 +5,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import postgres from "postgres";
+import { sslFor } from "../lib/db/ssl";
 import "dotenv/config";
 
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is not set. Copy .env.example to .env.local.");
 
-const sql = postgres(url, { max: 1, onnotice: () => {} });
+const sql = postgres(url, { max: 1, ssl: sslFor(url), onnotice: () => {} });
 
 async function main() {
   await sql`create table if not exists schema_migrations (
