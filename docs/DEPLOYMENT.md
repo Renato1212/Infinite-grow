@@ -17,6 +17,7 @@ you can change, is what "Five things to finish" covers.
 | Schema | 35 tables, 3 views, RLS forced on all 35 with 140 policies, all triggers and the seeded catalogue (21 instruments, 5 edge domains, 24 level types) |
 | Storage | private `media` bucket, 500 MB per file, owner-scoped policies |
 | Security advisors | zero findings |
+| Verified | a smoke test ran against the live database: a four-fill scale-in/scale-out trade produced the right average entry, peak size, ticks, net P&L and R multiple; the day aggregate and equity-curve triggers fired; a second user saw nothing through either the tables or the views; and it cleaned up after itself |
 | Vercel | project `deliberate-practice` created (`prj_fZBambI6XiIj6WV3SvBn8HsIinbP`) — **but see step 0**: its Git link could not be completed from here |
 
 **No sample data was seeded into production, deliberately.** This app exists to
@@ -128,6 +129,20 @@ stack trace.
   out below it.
 - **Media uploads** work as soon as you are signed in — the bucket and its
   policies are already in place.
+
+## Verifying production yourself
+
+Once `DATABASE_URL` is set, the same suites that run in development run against
+Supabase:
+
+```bash
+DATABASE_URL='postgresql://postgres.zggckkxrnaysruvcmqng:...@aws-0-eu-west-3.pooler.supabase.com:5432/postgres' npm test
+```
+
+That adds `tests/rls.test.ts` (a second user sees nothing) and
+`tests/pnl-parity.test.ts` (`lib/pnl.ts` and `recompute_trade()` agree). Both
+create and delete their own throwaway users, so they are safe to run against a
+live database — though naturally, run them before you have data you care about.
 
 ## Changing the schema later
 
