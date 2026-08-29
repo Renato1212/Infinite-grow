@@ -12,7 +12,7 @@ const base: Fact = {
   entry_bucket_15m: 58, mae_ticks: 4, mfe_ticks: 12, conviction: 4,
   execution_quality: 4, actual_day_type: "trend_up", volume_regime: "high",
   volatility_regime: "average", any_conflicting_domain: false,
-  mistake_labels: null, r_bucket: "1R..2R", duration_bucket: "5-15m", session_key: "us_rth",
+  tag_labels: null, mistake_labels: null, r_bucket: "1R..2R", duration_bucket: "5-15m", session_key: "us_rth",
 };
 
 const fact = (patch: Partial<Fact>): Fact => ({ ...base, ...patch });

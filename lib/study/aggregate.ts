@@ -27,6 +27,7 @@ export interface Fact {
   volume_regime: string | null;
   volatility_regime: string | null;
   any_conflicting_domain: boolean;
+  tag_labels: string[] | null;
   mistake_labels: string[] | null;
   r_bucket: string | null;
   duration_bucket: string | null;
