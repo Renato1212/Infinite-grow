@@ -47,7 +47,7 @@ export function StudyWorkspace(props: Props) {
       <header className="flex flex-wrap items-end justify-between gap-3 mb-4">
         <div>
           <h1 className="text-24 font-[590] tracking-[-0.018em]">Study</h1>
-          <p className="text-12 text-[var(--text-secondary)] mt-0.5">
+          <p className="text-12 [color:var(--text-secondary)] mt-0.5">
             Every card respects the filter and shows its sample size.
           </p>
         </div>

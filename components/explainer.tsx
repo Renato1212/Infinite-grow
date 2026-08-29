@@ -40,7 +40,7 @@ export function Explainer({ id, source }: { id: string; source: string | null })
           try { localStorage.setItem(OPEN_KEY(id), next ? "1" : "0"); } catch { /* ignore */ }
         }}
         className="inline-flex items-center gap-1.5 text-11 uppercase tracking-[0.06em] font-[560]
-                   text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]
+                   [color:var(--text-tertiary)] hover:[color:var(--text-secondary)]
                    transition-colors duration-[var(--d-fast)] rounded-sm"
       >
         <span
@@ -55,7 +55,7 @@ export function Explainer({ id, source }: { id: string; source: string | null })
       </button>
       {open && (
         <div className="mt-2 pl-3 border-l-2 border-[var(--line-strong)] text-12
-                        text-[var(--text-secondary)] max-w-[68ch]">
+                        [color:var(--text-secondary)] max-w-[68ch]">
           <Markdown source={source} />
         </div>
       )}

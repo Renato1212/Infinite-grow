@@ -67,7 +67,7 @@ export function SqlConsole() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h3 className="text-13 font-[590]">SQL console</h3>
-            <p className="text-11 text-[var(--text-tertiary)] mt-0.5">
+            <p className="text-11 [color:var(--text-tertiary)] mt-0.5">
               Read-only, against trade_facts, level_facts and day_facts.
             </p>
           </div>
@@ -102,7 +102,7 @@ export function SqlConsole() {
             <button
               type="button"
               onClick={() => setText(q.sql)}
-              className="text-11 px-2 h-6 rounded-l-[var(--r-pill)] bg-[var(--accent-quiet)] text-[var(--accent)]"
+              className="text-11 px-2 h-6 rounded-l-[var(--r-pill)] bg-[var(--accent-quiet)] [color:var(--accent)]"
             >
               {q.name}
             </button>
@@ -114,7 +114,7 @@ export function SqlConsole() {
                 setSaved((s) => s.filter((x) => x.id !== q.id));
               })}
               className="text-11 px-1.5 h-6 rounded-r-[var(--r-pill)] bg-[var(--accent-quiet)]
-                         text-[var(--text-tertiary)] hover:text-[var(--neg)]"
+                         [color:var(--text-tertiary)] hover:[color:var(--neg)]"
             >×</button>
           </span>
         ))}
@@ -138,7 +138,7 @@ export function SqlConsole() {
         <Button variant="primary" size="sm" onClick={execute} disabled={pending}>
           Run
         </Button>
-        <span className="text-11 text-[var(--text-tertiary)]">⌘↵</span>
+        <span className="text-11 [color:var(--text-tertiary)]">⌘↵</span>
         <span className="flex-1" />
         <Input
           value={name} placeholder="Save as…" className="h-7 py-0 w-[160px] text-12"
@@ -159,16 +159,16 @@ export function SqlConsole() {
       </div>
 
       {error && (
-        <p className="text-12 text-[var(--neg)] mt-3 mono">{error}</p>
+        <p className="text-12 [color:var(--neg)] mt-3 mono">{error}</p>
       )}
 
       {rows && (
         <div className="mt-3">
-          <p className="text-11 text-[var(--text-tertiary)] mb-1.5 num">
+          <p className="text-11 [color:var(--text-tertiary)] mb-1.5 num">
             {rows.length} rows{rows.length === 500 && " (capped at 500)"}
           </p>
           {rows.length === 0 ? (
-            <p className="text-12 text-[var(--text-tertiary)]">The query returned nothing.</p>
+            <p className="text-12 [color:var(--text-tertiary)]">The query returned nothing.</p>
           ) : (
             <div className="overflow-auto max-h-[420px] border border-[var(--line)] rounded-[var(--r-input)]">
               <table className="w-full text-11 border-collapse">

@@ -20,7 +20,7 @@ export function PnlCurve({ points }: { points: DayBundle["pnlPoints"] }) {
 
   if (data.length < 2) {
     return (
-      <div className="h-[132px] grid place-items-center text-12 text-[var(--text-tertiary)]">
+      <div className="h-[132px] grid place-items-center text-12 [color:var(--text-tertiary)]">
         The curve appears once two trades have closed.
       </div>
     );

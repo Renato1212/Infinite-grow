@@ -108,7 +108,7 @@ export function PhasePlan(props: CockpitProps & { phase: Phase }) {
                           <span className="font-[560]">{o.setupName}</span>
                           {traded && <Pill tone="accent" className="ml-1.5">traded</Pill>}
                           {o.locationNote && (
-                            <div className="text-11 text-[var(--text-tertiary)] truncate max-w-[260px]">
+                            <div className="text-11 [color:var(--text-tertiary)] truncate max-w-[260px]">
                               {o.locationNote}
                             </div>
                           )}
@@ -116,7 +116,7 @@ export function PhasePlan(props: CockpitProps & { phase: Phase }) {
                         <td className="px-2.5 py-2 mono">
                           {instruments.find((i) => i.id === o.instrumentId)?.symbol ?? "—"}
                         </td>
-                        <td className="px-2.5 py-2 text-[var(--text-secondary)] max-w-[160px] truncate">
+                        <td className="px-2.5 py-2 [color:var(--text-secondary)] max-w-[160px] truncate">
                           {hyp?.label ?? "—"}
                         </td>
                         <td className="px-2.5 py-2">
@@ -134,7 +134,7 @@ export function PhasePlan(props: CockpitProps & { phase: Phase }) {
                           <button
                             type="button" aria-label={`Remove ${o.setupName}`}
                             onClick={() => start(async () => { await deleteOpportunity(o.id, date); router.refresh(); })}
-                            className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                            className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
                           >×</button>
                         </td>
                       </tr>
@@ -161,7 +161,7 @@ export function PhasePlan(props: CockpitProps & { phase: Phase }) {
                   <Card key={s.id} className="p-3.5 min-w-0">
                     <div className="flex items-baseline justify-between mb-2">
                       <h4 className="text-13 font-[590]">{s.label}</h4>
-                      <span className="text-11 mono text-[var(--text-tertiary)]">
+                      <span className="text-11 mono [color:var(--text-tertiary)]">
                         {s.startTime.slice(0, 5)}–{s.endTime.slice(0, 5)}
                       </span>
                     </div>
@@ -260,7 +260,7 @@ function HypothesisCard({
           <button
             type="button" aria-label={`Remove ${h.label}`}
             onClick={() => setConfirming(true)}
-            className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+            className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
           >×</button>
         </div>
       </div>
@@ -325,7 +325,7 @@ function HypothesisCard({
             const type = levelTypes.find((t) => t.id === level?.levelTypeId);
             return (
               <li key={p.prepLevelId} className="flex items-center gap-1.5">
-                {i > 0 && <span aria-hidden className="text-[var(--text-tertiary)]">→</span>}
+                {i > 0 && <span aria-hidden className="[color:var(--text-tertiary)]">→</span>}
                 <span className="px-1.5 py-0.5 rounded-[var(--r-pill)] bg-[var(--bg-hover)] mono">
                   {type?.label} {level ? formatPrice(level.price, tickSize) : ""}
                 </span>
@@ -405,14 +405,14 @@ function PathPicker({
                 onClick={() => toggle(l.id)}
                 aria-pressed={index >= 0}
                 className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-[var(--r-input)] text-13 text-left
-                  ${index >= 0 ? "bg-[var(--accent-quiet)] text-[var(--accent)]" : "hover:bg-[var(--bg-hover)]"}`}
+                  ${index >= 0 ? "bg-[var(--accent-quiet)] [color:var(--accent)]" : "hover:bg-[var(--bg-hover)]"}`}
               >
-                <span className="num w-5 text-11 text-[var(--text-tertiary)]">
+                <span className="num w-5 text-11 [color:var(--text-tertiary)]">
                   {index >= 0 ? index + 1 : ""}
                 </span>
                 <span className="w-32 shrink-0">{type?.label}</span>
                 <span className="mono">{formatPrice(l.price, tickSize)}</span>
-                <span className="text-11 text-[var(--text-tertiary)] truncate">{l.note}</span>
+                <span className="text-11 [color:var(--text-tertiary)] truncate">{l.note}</span>
               </button>
             </li>
           );

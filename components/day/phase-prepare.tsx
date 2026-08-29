@@ -68,6 +68,7 @@ export function PhasePrepare(props: CockpitProps & { phase: Phase }) {
               <div className="flex items-center gap-2">
                 <Select
                   value={adding} placeholder="Add an instrument" className="h-8 py-0 w-[180px]"
+                  aria-label="Add an instrument to today's preparation"
                   onChange={(e) => {
                     const id = e.target.value;
                     setAdding("");
@@ -185,10 +186,10 @@ function InstrumentPrepCard({
           aria-label={`${symbol}, ${name}, ${levels.length} levels`}
           className="flex items-baseline gap-2 text-left min-w-0"
         >
-          <span aria-hidden className="text-[var(--text-tertiary)] text-12">{open ? "▾" : "▸"}</span>
+          <span aria-hidden className="[color:var(--text-tertiary)] text-12">{open ? "▾" : "▸"}</span>
           <span className="text-15 font-[590] mono">{symbol}</span>
-          <span className="text-12 text-[var(--text-secondary)] truncate">{name}</span>
-          <span className="text-11 text-[var(--text-tertiary)] num">
+          <span className="text-12 [color:var(--text-secondary)] truncate">{name}</span>
+          <span className="text-11 [color:var(--text-tertiary)] num">
             {levels.length} level{levels.length === 1 ? "" : "s"}
           </span>
         </button>
@@ -229,7 +230,7 @@ function InstrumentPrepCard({
             type="button"
             aria-label={`Remove ${symbol} prep`}
             onClick={() => setConfirming(true)}
-            className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+            className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
           >
             ×
           </button>
@@ -281,6 +282,7 @@ function InstrumentPrepCard({
               <TagInput
                 values={prep.chartPattern}
                 placeholder="Add"
+                label="Chart patterns"
                 onChange={(v) => start(async () => { await save({ chartPattern: v }); })}
               />
             </div>

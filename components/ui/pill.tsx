@@ -7,11 +7,11 @@ export function Pill({
   tone?: "neutral" | "accent" | "pos" | "neg" | "warn";
 }) {
   const tones = {
-    neutral: "bg-[var(--bg-hover)] text-[var(--text-secondary)]",
-    accent: "bg-[var(--accent-quiet)] text-[var(--accent)]",
-    pos: "bg-[var(--pos-quiet)] text-[var(--pos)]",
-    neg: "bg-[var(--neg-quiet)] text-[var(--neg)]",
-    warn: "bg-[var(--warn-quiet)] text-[var(--warn)]",
+    neutral: "bg-[var(--bg-hover)] [color:var(--text-secondary)]",
+    accent: "bg-[var(--accent-quiet)] [color:var(--accent)]",
+    pos: "bg-[var(--pos-quiet)] [color:var(--pos)]",
+    neg: "bg-[var(--neg-quiet)] [color:var(--neg)]",
+    warn: "bg-[var(--warn-quiet)] [color:var(--warn)]",
   } as const;
   return (
     <span

@@ -34,7 +34,7 @@ export function Analysis({
         <div className="min-w-0">
           <h3 className="text-13 font-[590]">{title}</h3>
           {description && (
-            <p className="text-11 text-[var(--text-tertiary)] mt-0.5">{description}</p>
+            <p className="text-11 [color:var(--text-tertiary)] mt-0.5">{description}</p>
           )}
         </div>
         <SampleSize n={n} min={min} />
@@ -43,7 +43,7 @@ export function Analysis({
         {children}
       </div>
       {thin && (
-        <p className="text-11 text-[var(--warn)] mt-2.5">
+        <p className="text-11 [color:var(--warn)] mt-2.5">
           Below your minimum of {min}. Read it as an anecdote, not a finding.
         </p>
       )}
@@ -123,7 +123,7 @@ export function DomainMatrixCard({ facts, min }: { facts: Fact[]; min: number })
                     const v = cell(r, c);
                     return (
                       <td key={c} className="py-1.5 px-3 text-right">
-                        {v ? <CellValue e={v} /> : <span className="text-[var(--text-tertiary)]">—</span>}
+                        {v ? <CellValue e={v} /> : <span className="[color:var(--text-tertiary)]">—</span>}
                       </td>
                     );
                   })}
@@ -143,11 +143,11 @@ function CellValue({ e }: { e: Expectancy }) {
     <span className="inline-flex flex-col items-end leading-tight">
       <span className={cn(
         "num tabular-nums",
-        e.netPnl > 0 && "text-[var(--pos)]", e.netPnl < 0 && "text-[var(--neg)]",
+        e.netPnl > 0 && "[color:var(--pos)]", e.netPnl < 0 && "[color:var(--neg)]",
       )}>
         {signedMoney(e.netPnl, true)}
       </span>
-      <span className="text-11 text-[var(--text-tertiary)] num">
+      <span className="text-11 [color:var(--text-tertiary)] num">
         {e.count} · {e.winRate === null ? "—" : percent(e.winRate)}
       </span>
     </span>
@@ -173,7 +173,7 @@ export function PlanAdherenceCard({ facts, min }: { facts: Fact[]; min: number }
               <span className="text-12">{r.label}</span>
               <span className={cn(
                 "num text-15 font-[590]",
-                r.e.netPnl > 0 && "text-[var(--pos)]", r.e.netPnl < 0 && "text-[var(--neg)]",
+                r.e.netPnl > 0 && "[color:var(--pos)]", r.e.netPnl < 0 && "[color:var(--neg)]",
               )}>
                 {signedMoney(r.e.netPnl)}
               </span>
@@ -181,7 +181,7 @@ export function PlanAdherenceCard({ facts, min }: { facts: Fact[]; min: number }
             <Bars value={r.e.netPnl} max={Math.max(
               Math.abs(split.planned.netPnl), Math.abs(split.unplanned.netPnl), 1,
             )} />
-            <div className="text-11 text-[var(--text-tertiary)] num mt-1">
+            <div className="text-11 [color:var(--text-tertiary)] num mt-1">
               {r.e.count} trades · {r.e.winRate === null ? "—" : percent(r.e.winRate)} win rate ·{" "}
               {r.e.expectancy === null ? "—" : `${signedMoney(r.e.expectancy)} each`}
             </div>
@@ -239,7 +239,7 @@ export function EnvironmentCard({ facts, min }: { facts: Fact[]; min: number }) 
 
 export function BucketTable({ buckets }: { buckets: Bucket[] }) {
   if (!buckets.length) {
-    return <p className="text-12 text-[var(--text-tertiary)]">Nothing in this slice.</p>;
+    return <p className="text-12 [color:var(--text-tertiary)]">Nothing in this slice.</p>;
   }
   return (
     <div className="overflow-x-auto">
@@ -261,7 +261,7 @@ export function BucketTable({ buckets }: { buckets: Bucket[] }) {
               <td className="py-1.5 pl-3 text-right num">{b.winRate === null ? "—" : percent(b.winRate)}</td>
               <td className={cn(
                 "py-1.5 pl-3 text-right num font-[560]",
-                b.netPnl > 0 && "text-[var(--pos)]", b.netPnl < 0 && "text-[var(--neg)]",
+                b.netPnl > 0 && "[color:var(--pos)]", b.netPnl < 0 && "[color:var(--neg)]",
               )}>
                 {signedMoney(b.netPnl, true)}
               </td>
@@ -289,7 +289,7 @@ export function TimeOfDayCard({ facts, min }: { facts: Fact[]; min: number }) {
       n={facts.length} min={min} wide
     >
       {buckets.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">No trades with entry times in this slice.</p>
+        <p className="text-12 [color:var(--text-tertiary)]">No trades with entry times in this slice.</p>
       ) : (
         <>
           <div className="flex flex-wrap gap-0.5">
@@ -299,20 +299,20 @@ export function TimeOfDayCard({ facts, min }: { facts: Fact[]; min: number }) {
                 <div
                   key={b.key}
                   title={`${b.label} · ${b.count} trades · ${signedMoney(b.netPnl)} · ${b.winRate === null ? "—" : percent(b.winRate)} win rate`}
-                  className="w-[34px] rounded-[3px] px-0.5 py-1 text-center"
+                  className="w-[36px] rounded-[3px] px-0.5 py-1 text-center"
                   style={{
                     background: b.netPnl === 0
                       ? "var(--bg-hover)"
-                      : `color-mix(in oklab, ${b.netPnl > 0 ? "var(--pos)" : "var(--neg)"} ${Math.round(12 + intensity * 62)}%, transparent)`,
+                      : `color-mix(in oklab, ${b.netPnl > 0 ? "var(--pos)" : "var(--neg)"} ${Math.round(10 + intensity * 34)}%, transparent)`,
                   }}
                 >
-                  <div className="text-[9px] mono text-[var(--text-secondary)] leading-none">{b.label}</div>
-                  <div className="text-11 num leading-tight mt-0.5">{b.count}</div>
+                  <div className="text-[10px] mono leading-none">{b.label}</div>
+                  <div className="text-11 num leading-tight mt-0.5 font-[560]">{b.count}</div>
                 </div>
               );
             })}
           </div>
-          <p className="text-11 text-[var(--text-tertiary)] mt-2">
+          <p className="text-11 [color:var(--text-tertiary)] mt-2">
             Shade is net P&L, number is trade count. Hover for the detail.
           </p>
         </>
@@ -338,7 +338,7 @@ export function LevelPerformanceCard({
       n={total} min={min} wide
     >
       {stats.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           No level interactions recorded yet. Mark what price did at each level during the session.
         </p>
       ) : (
@@ -361,7 +361,7 @@ export function LevelPerformanceCard({
                   <td className="py-1.5 pl-3 text-right num">{percent(s.respected / s.n)}</td>
                   <td className="py-1.5 pl-3 text-right num">{percent(s.broke / s.n)}</td>
                   <td className="py-1.5 pl-3 text-right num">{percent(s.broke_retested / s.n)}</td>
-                  <td className="py-1.5 pl-3 text-right num text-[var(--text-tertiary)]">
+                  <td className="py-1.5 pl-3 text-right num [color:var(--text-tertiary)]">
                     {percent(s.no_touch / s.n)}
                   </td>
                   <td className="py-1.5 pl-3 text-right num">{s.avg_ticks ?? "—"}</td>
@@ -384,7 +384,7 @@ export function MaeMfeCard({ facts, min }: { facts: Fact[]; min: number }) {
       n={points.length} min={min}
     >
       {points.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           No trades with MAE and MFE recorded. Add them on the trade page.
         </p>
       ) : (
@@ -434,7 +434,7 @@ export function MistakesCard({ facts, min }: { facts: Fact[]; min: number }) {
       n={tagged} min={min}
     >
       {data.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           No mistakes tagged in this slice. Tag them in the debrief and the trend appears here.
         </p>
       ) : (
@@ -475,7 +475,7 @@ export function ConsistencyCard({ facts, min }: { facts: Fact[]; min: number }) 
       n={facts.length} min={min}
     >
       {series.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           Twenty trades are needed before this says anything.
         </p>
       ) : (
@@ -537,7 +537,7 @@ export function DisciplineCard({
       n={points.length} min={Math.min(min, 20)}
     >
       {points.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           Check your rules at the end of a day and adherence becomes a number here.
         </p>
       ) : (
@@ -581,7 +581,7 @@ export function DisciplineCard({
                     <td className="py-1 text-right num">{v.n}</td>
                     <td className={cn(
                       "py-1 text-right num",
-                      v.net > 0 && "text-[var(--pos)]", v.net < 0 && "text-[var(--neg)]",
+                      v.net > 0 && "[color:var(--pos)]", v.net < 0 && "[color:var(--neg)]",
                     )}>
                       {signedMoney(v.net, true)}
                     </td>

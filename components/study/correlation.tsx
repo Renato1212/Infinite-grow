@@ -31,13 +31,15 @@ export function CorrelationExplorer({ facts }: { facts: Fact[] }) {
         <div className="flex flex-wrap items-end gap-2">
           <div>
             <div className="label mb-1">Horizontal</div>
-            <Select value={xKey} className="h-8 py-0 w-[170px]" onChange={(e) => setXKey(e.target.value)}>
+            <Select
+              aria-label="Horizontal" value={xKey} className="h-8 py-0 w-[170px]" onChange={(e) => setXKey(e.target.value)}>
               {CORRELATION_FIELDS.map((f) => <option key={f.key} value={f.key}>{f.label}</option>)}
             </Select>
           </div>
           <div>
             <div className="label mb-1">Vertical</div>
-            <Select value={yKey} className="h-8 py-0 w-[170px]" onChange={(e) => setYKey(e.target.value)}>
+            <Select
+              aria-label="Vertical" value={yKey} className="h-8 py-0 w-[170px]" onChange={(e) => setYKey(e.target.value)}>
               {CORRELATION_FIELDS.map((f) => <option key={f.key} value={f.key}>{f.label}</option>)}
             </Select>
           </div>
@@ -52,14 +54,14 @@ export function CorrelationExplorer({ facts }: { facts: Fact[] }) {
       </header>
 
       {n < 30 && (
-        <p className="text-11 text-[var(--warn)] mb-2">
+        <p className="text-11 [color:var(--warn)] mb-2">
           {n} pairs. Below thirty, a correlation coefficient is closer to noise than to a finding —
           it will move a lot with the next few trades.
         </p>
       )}
 
       {points.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           No trades have both of those fields recorded.
         </p>
       ) : (

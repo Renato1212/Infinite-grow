@@ -76,7 +76,7 @@ export function SaveMark({ status }: { status: Status }) {
       aria-live="polite"
       className={cn(
         "text-11 tabular-nums transition-opacity duration-[var(--d-base)]",
-        status === "error" ? "text-[var(--neg)]" : "text-[var(--text-tertiary)]",
+        status === "error" ? "[color:var(--neg)]" : "[color:var(--text-tertiary)]",
         text ? "opacity-100" : "opacity-0",
       )}
     >
@@ -102,7 +102,7 @@ function Wrap({
         <SaveMark status={status} />
       </div>
       {children}
-      {hint && <p id={hintId} className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>}
+      {hint && <p id={hintId} className="mt-1 text-11 [color:var(--text-tertiary)]">{hint}</p>}
     </div>
   );
 }

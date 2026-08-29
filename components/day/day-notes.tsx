@@ -53,13 +53,13 @@ export function DayNotes({
 
       <ul className="space-y-1 max-h-[240px] overflow-auto">
         {notes.length === 0 && (
-          <li className="text-12 text-[var(--text-tertiary)] py-2">
+          <li className="text-12 [color:var(--text-tertiary)] py-2">
             Nothing noted yet. Catch the observation while it is still true.
           </li>
         )}
         {notes.map((n) => (
           <li key={n.id} className="flex items-start gap-2.5 py-1 border-b border-[var(--line)] last:border-0">
-            <time className="mono text-11 text-[var(--text-tertiary)] pt-0.5 w-11 shrink-0">
+            <time className="mono text-11 [color:var(--text-tertiary)] pt-0.5 w-11 shrink-0">
               {localTime(n.notedAt)}
             </time>
             {n.kind !== "observation" && (
@@ -71,7 +71,7 @@ export function DayNotes({
             <button
               type="button" aria-label="Remove note"
               onClick={() => start(async () => { await deleteNote(n.id, date); router.refresh(); })}
-              className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1 shrink-0"
+              className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1 shrink-0"
             >×</button>
           </li>
         ))}
@@ -86,7 +86,11 @@ export function DayNotes({
             onKeyDown={(e) => { if (e.key === "Enter" && body.trim()) submit(); }}
           />
         </div>
-        <Select value={kind} className="h-8 py-0 w-[130px]" onChange={(e) => setKind(e.target.value)}>
+        <Select
+          value={kind} className="h-8 py-0 w-[130px]"
+          aria-label="Kind of note"
+          onChange={(e) => setKind(e.target.value)}
+        >
           {KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
         </Select>
         <Button size="sm" onClick={submit} disabled={!body.trim()}>Add</Button>

@@ -17,14 +17,14 @@ export default async function LoginPage() {
     <main className="min-h-dvh grid place-items-center px-4">
       <div className="w-full max-w-[340px]">
         <h1 className="text-20 font-[590] tracking-[-0.015em]">Deliberate practice</h1>
-        <p className="text-13 text-[var(--text-secondary)] mt-1 mb-6">
+        <p className="text-13 [color:var(--text-secondary)] mt-1 mb-6">
           Prepare, plan, trade, record, debrief, study.
         </p>
         {configured ? (
           <LoginForm />
         ) : (
-          <div className="text-13 text-[var(--text-secondary)] leading-[1.55]">
-            <p className="text-[var(--text)] font-[590] mb-1">No auth configured yet.</p>
+          <div className="text-13 [color:var(--text-secondary)] leading-[1.55]">
+            <p className="[color:var(--text)] font-[590] mb-1">No auth configured yet.</p>
             <p>
               Set <code className="mono text-12">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
               <code className="mono text-12">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in{" "}

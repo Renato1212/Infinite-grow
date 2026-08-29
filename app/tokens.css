@@ -16,8 +16,8 @@
   --g6:  #d3d7de;
   --g7:  #bfc4cd;
   --g8:  #9aa1ad;
-  --g9:  #7b828f;
-  --g10: #5d646f;
+  --g9:  #676e7b;
+  --g10: #4a515c;
   --g11: #3f454e;
   --g12: #14171c;
 
@@ -36,11 +36,11 @@
   --line:          rgb(20 23 28 / 0.08);
   --line-strong:   rgb(20 23 28 / 0.14);
 
-  --accent:        #2f6df6;
-  --accent-hover:  #2a61dc;
-  --accent-quiet:  rgb(47 109 246 / 0.10);
-  --accent-line:   rgb(47 109 246 / 0.30);
-  --focus:         #2f6df6;
+  --accent:        #2559cc;
+  --accent-hover:  #1f4bb0;
+  --accent-quiet:  rgb(37 89 204 / 0.10);
+  --accent-line:   rgb(37 89 204 / 0.30);
+  --focus:         #2559cc;
 
   --pos:           #2f7a56;
   --pos-quiet:     rgb(47 122 86 / 0.10);
@@ -99,7 +99,7 @@
     --g6:  #2c333b;
     --g7:  #3a424c;
     --g8:  #545d68;
-    --g9:  #7a838f;
+    --g9:  #8b939f;
     --g10: #9aa3ae;
     --g11: #c6ccd4;
     --g12: #f2f4f7;
@@ -145,7 +145,7 @@
 :root[data-theme="dark"] {
   --g1:  #0c0e11; --g2:  #111418; --g3:  #161a1f; --g4:  #1c2127;
   --g5:  #232930; --g6:  #2c333b; --g7:  #3a424c; --g8:  #545d68;
-  --g9:  #7a838f; --g10: #9aa3ae; --g11: #c6ccd4; --g12: #f2f4f7;
+  --g9:  #8b939f; --g10: #9aa3ae; --g11: #c6ccd4; --g12: #f2f4f7;
 
   --bg: var(--g1); --bg-subtle: var(--g2); --bg-raised: var(--g3); --bg-sunken: #080a0c;
   --bg-hover: rgb(255 255 255 / 0.045); --bg-active: rgb(255 255 255 / 0.075);

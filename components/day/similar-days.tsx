@@ -44,7 +44,7 @@ export function SimilarDays({ days, classified }: { days: SimilarDay[]; classifi
       <header className="flex items-baseline justify-between gap-3 mb-2.5">
         <div>
           <h3 className="label">Days like this one</h3>
-          <p className="text-11 text-[var(--text-tertiary)] mt-0.5">
+          <p className="text-11 [color:var(--text-tertiary)] mt-0.5">
             Weighted match on day type, open, regimes and flow flags.
           </p>
         </div>
@@ -58,11 +58,11 @@ export function SimilarDays({ days, classified }: { days: SimilarDay[]; classifi
         />
       ) : (
         <>
-          <p className="text-12 text-[var(--text-secondary)] mb-2.5">
+          <p className="text-12 [color:var(--text-secondary)] mb-2.5">
             On these {days.length} sessions you made{" "}
             <span className={cn(
               "num font-[560]",
-              net > 0 && "text-[var(--pos)]", net < 0 && "text-[var(--neg)]",
+              net > 0 && "[color:var(--pos)]", net < 0 && "[color:var(--neg)]",
             )}>
               {signedMoney(net)}
             </span>
@@ -89,7 +89,7 @@ export function SimilarDays({ days, classified }: { days: SimilarDay[]; classifi
               <tbody>
                 {days.map((d) => (
                   <tr key={d.day} className="border-t border-[var(--line)]">
-                    <td className="py-1.5 pr-3 num whitespace-nowrap text-[var(--text-secondary)]">
+                    <td className="py-1.5 pr-3 num whitespace-nowrap [color:var(--text-secondary)]">
                       <span
                         className="inline-block w-8 h-1.5 rounded-full bg-[var(--bg-hover)] mr-1.5 align-middle overflow-hidden"
                         aria-hidden
@@ -107,18 +107,18 @@ export function SimilarDays({ days, classified }: { days: SimilarDay[]; classifi
                       </Link>
                     </td>
                     <td className="py-1.5 pr-3 whitespace-nowrap">{humanise(d.actual_day_type)}</td>
-                    <td className="py-1.5 pr-3 text-[var(--text-secondary)] whitespace-nowrap">
+                    <td className="py-1.5 pr-3 [color:var(--text-secondary)] whitespace-nowrap">
                       {d.volume_regime ?? "—"} / {d.volatility_regime ?? "—"}
                     </td>
                     <td className="py-1.5 pl-3 text-right num">{d.trade_count}</td>
                     <td className={cn(
                       "py-1.5 pl-3 text-right num font-[560] whitespace-nowrap",
-                      num(d.net_pnl) > 0 && "text-[var(--pos)]",
-                      num(d.net_pnl) < 0 && "text-[var(--neg)]",
+                      num(d.net_pnl) > 0 && "[color:var(--pos)]",
+                      num(d.net_pnl) < 0 && "[color:var(--neg)]",
                     )}>
                       {signedMoney(d.net_pnl)}
                     </td>
-                    <td className="py-1.5 pl-3 text-right text-[var(--text-secondary)] whitespace-nowrap">
+                    <td className="py-1.5 pl-3 text-right [color:var(--text-secondary)] whitespace-nowrap">
                       {d.primary_hypothesis_outcome ? humanise(d.primary_hypothesis_outcome) : "—"}
                     </td>
                   </tr>

@@ -44,7 +44,7 @@ export function ReviewsView({
       <header className="flex flex-wrap items-end justify-between gap-3 mb-4">
         <div>
           <h1 className="text-24 font-[590] tracking-[-0.018em]">Reviews</h1>
-          <p className="text-12 text-[var(--text-secondary)] mt-0.5">
+          <p className="text-12 [color:var(--text-secondary)] mt-0.5">
             The weekly and monthly step back from the day-by-day.
           </p>
         </div>
@@ -107,7 +107,7 @@ export function ReviewsView({
                   <h2 className="text-15 font-[590]">
                     {humanise(r.type)} · {shortDayLabel(r.periodStart)} – {shortDayLabel(r.periodEnd)}
                   </h2>
-                  <span className="text-11 text-[var(--text-tertiary)] num">
+                  <span className="text-11 [color:var(--text-tertiary)] num">
                     {periodDays.length} sessions
                   </span>
                 </header>
@@ -143,9 +143,9 @@ export function ReviewsView({
                       title={`${d.day} · ${signedMoney(d.net_pnl)} · ${d.trade_count} trades`}
                       className={cn(
                         "px-1.5 py-1 rounded-[4px] text-11 mono tabular-nums",
-                        Number(d.net_pnl) > 0 && "bg-[var(--pos-quiet)] text-[var(--pos)]",
-                        Number(d.net_pnl) < 0 && "bg-[var(--neg-quiet)] text-[var(--neg)]",
-                        Number(d.net_pnl) === 0 && "bg-[var(--bg-hover)] text-[var(--text-tertiary)]",
+                        Number(d.net_pnl) > 0 && "bg-[var(--pos-quiet)] [color:var(--pos)]",
+                        Number(d.net_pnl) < 0 && "bg-[var(--neg-quiet)] [color:var(--neg)]",
+                        Number(d.net_pnl) === 0 && "bg-[var(--bg-hover)] [color:var(--text-tertiary)]",
                       )}
                     >
                       {d.day.slice(8)}
@@ -177,6 +177,7 @@ export function ReviewsView({
                       <TagInput
                         values={r.themes}
                         placeholder="Add theme"
+                        label="Review themes"
                         onChange={(themes) => start(async () => {
                           await upsertReview({ ...r, themes });
                           router.refresh();

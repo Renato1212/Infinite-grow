@@ -195,7 +195,7 @@ export function FilterBar(props: FilterBarProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3 mt-2.5">
-        <span className="text-12 text-[var(--text-secondary)] num">
+        <span className="text-12 [color:var(--text-secondary)] num">
           {props.resultCount} trades match
           {count > 0 && ` · ${count} filter${count === 1 ? "" : "s"}`}
         </span>
@@ -236,7 +236,7 @@ export function FilterBar(props: FilterBarProps) {
                     router.refresh();
                   })}
                   className="text-11 px-1.5 h-6 rounded-r-[var(--r-pill)] bg-[var(--bg-hover)]
-                             text-[var(--text-tertiary)] hover:text-[var(--neg)]"
+                             [color:var(--text-tertiary)] hover:[color:var(--neg)]"
                 >
                   ×
                 </button>
@@ -288,7 +288,7 @@ function DateRange({
         onChange={(e) => onChange({ from: e.target.value || undefined })}
         className="h-7 py-0 w-[132px] text-12 mono"
       />
-      <span aria-hidden className="text-[var(--text-tertiary)]">–</span>
+      <span aria-hidden className="[color:var(--text-tertiary)]">–</span>
       <Input
         type="date" aria-label="To" value={filter.to ?? ""}
         onChange={(e) => onChange({ to: e.target.value || undefined })}
@@ -312,8 +312,8 @@ function MultiSelect({
           className={cn(
             "h-7 px-2.5 rounded-[var(--r-pill)] text-12 border transition-colors duration-[var(--d-fast)]",
             selected.length
-              ? "bg-[var(--accent-quiet)] text-[var(--accent)] border-transparent font-[560]"
-              : "border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+              ? "bg-[var(--accent-quiet)] [color:var(--accent)] border-transparent font-[560]"
+              : "border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
           )}
         >
           {label}
@@ -331,7 +331,7 @@ function MultiSelect({
               autoFocus value={query} onChange={(e) => setQuery(e.target.value)}
               placeholder="Filter"
               className="w-full h-7 px-2 mb-1 text-12 bg-transparent border-b border-[var(--line)]
-                         focus:outline-none placeholder:text-[var(--text-tertiary)]"
+                         focus:outline-none placeholder:[color:var(--text-tertiary)]"
             />
           )}
           <ul className="max-h-[240px] overflow-auto">
@@ -344,7 +344,7 @@ function MultiSelect({
                   className={cn(
                     "w-full flex items-center gap-2 px-2 h-7 rounded-[var(--r-input)] text-12 text-left",
                     selected.includes(o.value)
-                      ? "bg-[var(--accent-quiet)] text-[var(--accent)]"
+                      ? "bg-[var(--accent-quiet)] [color:var(--accent)]"
                       : "hover:bg-[var(--bg-hover)]",
                   )}
                 >
@@ -374,8 +374,8 @@ function Segmented({
           className={cn(
             "h-7 px-2.5 rounded-[var(--r-pill)] text-12 border transition-colors duration-[var(--d-fast)]",
             value === o.value
-              ? "bg-[var(--accent-quiet)] text-[var(--accent)] border-transparent font-[560]"
-              : "border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+              ? "bg-[var(--accent-quiet)] [color:var(--accent)] border-transparent font-[560]"
+              : "border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
           )}
         >
           {o.label}
@@ -393,8 +393,8 @@ function NumberFilter({
       className={cn(
         "inline-flex items-center gap-1 h-7 pl-2.5 pr-1 rounded-[var(--r-pill)] text-12 border",
         value !== undefined
-          ? "bg-[var(--accent-quiet)] text-[var(--accent)] border-transparent"
-          : "border-[var(--line-strong)] text-[var(--text-secondary)]",
+          ? "bg-[var(--accent-quiet)] [color:var(--accent)] border-transparent"
+          : "border-[var(--line-strong)] [color:var(--text-secondary)]",
       )}
     >
       {label}

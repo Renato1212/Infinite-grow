@@ -92,7 +92,7 @@ export function TradesBrowser(props: Props) {
       <header className="flex flex-wrap items-end justify-between gap-4 mb-4">
         <div>
           <h1 className="text-24 font-[590] tracking-[-0.018em]">Trades</h1>
-          <p className="text-12 text-[var(--text-secondary)] mt-0.5">
+          <p className="text-12 [color:var(--text-secondary)] mt-0.5">
             j and k move, Enter opens. The filter is in the URL.
           </p>
         </div>
@@ -142,7 +142,7 @@ export function TradesBrowser(props: Props) {
                       <button
                         type="button"
                         onClick={() => toggleSort(c.key!)}
-                        className="hover:text-[var(--text)] inline-flex items-center gap-1"
+                        className="hover:[color:var(--text)] inline-flex items-center gap-1"
                       >
                         {c.label}
                         {sort === c.key && <span aria-hidden>{descending ? "↓" : "↑"}</span>}
@@ -159,8 +159,10 @@ export function TradesBrowser(props: Props) {
                   id={`row-${i}`}
                   onMouseEnter={() => setCursor(i)}
                   className={cn(
-                    "border-t border-[var(--line)]",
-                    i === cursor ? "bg-[var(--accent-quiet)]" : "hover:bg-[var(--bg-hover)]",
+                    "border-t border-[var(--line)] border-l-2",
+                    i === cursor
+                      ? "bg-[var(--bg-active)] border-l-[var(--accent)]"
+                      : "border-l-transparent hover:bg-[var(--bg-hover)]",
                   )}
                 >
                   <td className="px-2 py-1.5 mono whitespace-nowrap">
@@ -177,7 +179,7 @@ export function TradesBrowser(props: Props) {
                   <td className="px-2 py-1.5">
                     <DirectionMark direction={t.direction as "long" | "short"} />
                   </td>
-                  <td className="px-2 py-1.5 text-right num text-[var(--text-secondary)]">
+                  <td className="px-2 py-1.5 text-right num [color:var(--text-secondary)]">
                     {duration(t.duration_seconds)}
                   </td>
                   <td className="px-2 py-1.5 text-right num">
@@ -188,14 +190,14 @@ export function TradesBrowser(props: Props) {
                   </td>
                   <td className={cn(
                     "px-2 py-1.5 text-right num font-[560]",
-                    Number(t.net_pnl) > 0 && "text-[var(--pos)]",
-                    Number(t.net_pnl) < 0 && "text-[var(--neg)]",
+                    Number(t.net_pnl) > 0 && "[color:var(--pos)]",
+                    Number(t.net_pnl) < 0 && "[color:var(--neg)]",
                   )}>
                     {signedMoney(t.net_pnl)}
                   </td>
                   <td className="px-2 py-1.5">
                     {t.planned
-                      ? <span className="text-[var(--text-tertiary)]">planned</span>
+                      ? <span className="[color:var(--text-tertiary)]">planned</span>
                       : <Pill tone="warn">improvised</Pill>}
                   </td>
                   <td className="px-2 py-1.5 whitespace-nowrap">
@@ -210,12 +212,12 @@ export function TradesBrowser(props: Props) {
                           <Pill tone="neg">against</Pill>
                         )}
                       </span>
-                    ) : <span className="text-[var(--warn)]">not scored</span>}
+                    ) : <span className="[color:var(--warn)]">not scored</span>}
                   </td>
-                  <td className="px-2 py-1.5 text-[var(--text-secondary)]">
+                  <td className="px-2 py-1.5 [color:var(--text-secondary)]">
                     {t.hypothesis_outcome ? humanise(t.hypothesis_outcome) : "—"}
                   </td>
-                  <td className="px-2 py-1.5 max-w-[180px] truncate text-[var(--text-tertiary)]">
+                  <td className="px-2 py-1.5 max-w-[180px] truncate [color:var(--text-tertiary)]">
                     {(t.tag_labels ?? []).join(", ") || "—"}
                   </td>
                 </tr>

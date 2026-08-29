@@ -118,7 +118,7 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
                   </span>
                   <span className="text-13 flex-1 min-w-[120px] truncate">{h.label}</span>
                   {h.assignedProbability !== null && (
-                    <span className="text-11 num text-[var(--text-tertiary)]">
+                    <span className="text-11 num [color:var(--text-tertiary)]">
                       said {h.assignedProbability}%
                     </span>
                   )}
@@ -137,10 +137,10 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
                         })}
                         className={cn(
                           "h-7 px-2 rounded-[var(--r-input)] text-11 border transition-colors duration-[var(--d-fast)]",
-                          h.outcome === o.value && o.tone === "pos" && "bg-[var(--pos-quiet)] text-[var(--pos)] border-transparent font-[560]",
-                          h.outcome === o.value && o.tone === "neg" && "bg-[var(--neg-quiet)] text-[var(--neg)] border-transparent font-[560]",
+                          h.outcome === o.value && o.tone === "pos" && "bg-[var(--pos-quiet)] [color:var(--pos)] border-transparent font-[560]",
+                          h.outcome === o.value && o.tone === "neg" && "bg-[var(--neg-quiet)] [color:var(--neg)] border-transparent font-[560]",
                           h.outcome === o.value && o.tone === "neutral" && "bg-[var(--bg-active)] border-transparent font-[560]",
-                          h.outcome !== o.value && "border-[var(--line)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
+                          h.outcome !== o.value && "border-[var(--line)] [color:var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
                         )}
                       >
                         {o.label}
@@ -197,7 +197,7 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
               <div className="flex items-baseline justify-between mb-2.5">
                 <h3 className="label">Rules</h3>
                 {answered > 0 && (
-                  <span className="text-11 num text-[var(--text-tertiary)]">
+                  <span className="text-11 num [color:var(--text-tertiary)]">
                     {followed}/{answered} followed
                     {bundle.day.processAdherencePct !== null &&
                       ` · ${Number(bundle.day.processAdherencePct).toFixed(0)}% adherence`}
@@ -228,10 +228,10 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
                               })}
                               className={cn(
                                 "h-6 px-2 rounded-[var(--r-input)] text-11 border transition-colors duration-[var(--d-fast)]",
-                                check?.status === s.value && s.value === "followed" && "bg-[var(--pos-quiet)] text-[var(--pos)] border-transparent font-[560]",
-                                check?.status === s.value && s.value === "broken" && "bg-[var(--neg-quiet)] text-[var(--neg)] border-transparent font-[560]",
+                                check?.status === s.value && s.value === "followed" && "bg-[var(--pos-quiet)] [color:var(--pos)] border-transparent font-[560]",
+                                check?.status === s.value && s.value === "broken" && "bg-[var(--neg-quiet)] [color:var(--neg)] border-transparent font-[560]",
                                 check?.status === s.value && s.value === "not_applicable" && "bg-[var(--bg-active)] border-transparent",
-                                check?.status !== s.value && "border-[var(--line)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
+                                check?.status !== s.value && "border-[var(--line)] [color:var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
                               )}
                             >
                               {s.label}
@@ -249,7 +249,7 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
               <h3 className="label mb-2.5">Actions</h3>
               <ul className="space-y-1">
                 {bundle.actions.length === 0 && (
-                  <li className="text-12 text-[var(--text-tertiary)]">
+                  <li className="text-12 [color:var(--text-tertiary)]">
                     Nothing outstanding. An action is a thing you will do differently, with a date.
                   </li>
                 )}
@@ -265,16 +265,16 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
                       })}
                       className="mt-0.5 size-[15px] rounded-[4px] accent-[var(--accent)]"
                     />
-                    <span className={cn("text-12 flex-1", a.completedAt && "line-through text-[var(--text-tertiary)]")}>
+                    <span className={cn("text-12 flex-1", a.completedAt && "line-through [color:var(--text-tertiary)]")}>
                       {a.actionText}
                     </span>
                     {a.dueDate && (
-                      <span className="text-11 num text-[var(--text-tertiary)]">{a.dueDate}</span>
+                      <span className="text-11 num [color:var(--text-tertiary)]">{a.dueDate}</span>
                     )}
                     <button
                       type="button" aria-label="Remove action"
                       onClick={() => start(async () => { await deleteDebriefAction(a.id, date); router.refresh(); })}
-                      className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                      className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
                     >×</button>
                   </li>
                 ))}

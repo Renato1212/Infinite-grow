@@ -67,11 +67,11 @@ export function Companion(props: Props) {
     .sort((a, b) => +new Date(a.scheduledAt) - +new Date(b.scheduledAt))[0];
 
   return (
-    <div className="min-h-dvh bg-[var(--bg)] text-[var(--text)] w-full max-w-[420px] mx-auto px-3 py-3">
+    <div className="min-h-dvh bg-[var(--bg)] [color:var(--text)] w-full max-w-[420px] mx-auto px-3 py-3">
       <header className="flex items-center gap-2 mb-3">
         <Link
           href={`/day/${props.date}`}
-          className="text-11 text-[var(--text-tertiary)] hover:text-[var(--text)]"
+          className="text-11 [color:var(--text-tertiary)] hover:[color:var(--text)]"
         >
           ← day
         </Link>
@@ -102,7 +102,7 @@ export function Companion(props: Props) {
               {countdownLabel(nextEvent.scheduledAt)}
             </span>
           </div>
-          <div className="text-11 text-[var(--text-tertiary)] mono">
+          <div className="text-11 [color:var(--text-tertiary)] mono">
             {localTime(nextEvent.scheduledAt)} · importance {nextEvent.importance}
           </div>
         </div>
@@ -119,8 +119,8 @@ export function Companion(props: Props) {
               className={cn(
                 "h-7 px-2.5 rounded-[var(--r-input)] mono text-12 shrink-0",
                 i.id === active
-                  ? "bg-[var(--accent)] text-[var(--text-on-accent)] font-[560]"
-                  : "border border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+                  ? "bg-[var(--accent)] [color:var(--text-on-accent)] font-[560]"
+                  : "border border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
               )}
             >
               {i.symbol}
@@ -136,11 +136,11 @@ export function Companion(props: Props) {
           {primary.invalidation && (
             <p className="text-12 mt-1.5">
               <span className="label mr-1.5">Wrong if</span>
-              <span className="text-[var(--neg)]">{primary.invalidation}</span>
+              <span className="[color:var(--neg)]">{primary.invalidation}</span>
             </p>
           )}
           {primary.plannedResponse && (
-            <p className="text-12 mt-1 text-[var(--text-secondary)]">{primary.plannedResponse}</p>
+            <p className="text-12 mt-1 [color:var(--text-secondary)]">{primary.plannedResponse}</p>
           )}
         </section>
       )}
@@ -148,7 +148,7 @@ export function Companion(props: Props) {
       <section className="mb-3">
         <div className="label mb-1">Levels — {instrument?.symbol}</div>
         {levels.length === 0 ? (
-          <p className="text-12 text-[var(--text-tertiary)]">Nothing marked for this instrument.</p>
+          <p className="text-12 [color:var(--text-tertiary)]">Nothing marked for this instrument.</p>
         ) : (
           <ul className="space-y-0.5">
             {levels.map((l) => {
@@ -160,7 +160,7 @@ export function Companion(props: Props) {
                       {formatPrice(l.price, instrument?.tickSize ?? 0.25)}
                     </span>
                     <span className="text-12 flex-1 min-w-0 truncate">{l.typeLabel}</span>
-                    <span className="text-11 text-[var(--text-tertiary)]">{"•".repeat(l.strength)}</span>
+                    <span className="text-11 [color:var(--text-tertiary)]">{"•".repeat(l.strength)}</span>
                   </div>
                   <div className="flex gap-0.5 mt-1">
                     {REACTIONS.map((r) => (
@@ -178,7 +178,7 @@ export function Companion(props: Props) {
                           "h-6 px-1.5 rounded-[var(--r-input)] text-11 border",
                           reaction === r.value
                             ? "bg-[var(--bg-active)] border-transparent font-[560]"
-                            : "border-[var(--line)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
+                            : "border-[var(--line)] [color:var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
                         )}
                       >
                         {r.label}
@@ -195,10 +195,10 @@ export function Companion(props: Props) {
       {props.rules.length > 0 && (
         <section>
           <div className="label mb-1">Rules</div>
-          <ul className="text-12 space-y-1 text-[var(--text-secondary)]">
+          <ul className="text-12 space-y-1 [color:var(--text-secondary)]">
             {props.rules.map((r) => (
               <li key={r.id} className="flex gap-1.5">
-                <span aria-hidden className="text-[var(--text-tertiary)]">—</span>
+                <span aria-hidden className="[color:var(--text-tertiary)]">—</span>
                 <span>{r.text}</span>
               </li>
             ))}

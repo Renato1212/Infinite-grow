@@ -43,7 +43,7 @@ export function Narratives({
           <Card key={s.key} className="p-3.5 min-w-0">
             <div className="flex items-baseline justify-between gap-2 mb-2">
               <h3 className="text-13 font-[590]">{s.label}</h3>
-              {s.hint && <span className="text-11 text-[var(--text-tertiary)]">{s.hint}</span>}
+              {s.hint && <span className="text-11 [color:var(--text-tertiary)]">{s.hint}</span>}
             </div>
 
             <AutosaveTextarea
@@ -58,6 +58,7 @@ export function Narratives({
               <div>
                 <div className="label mb-1">Sentiment</div>
                 <Select
+                  aria-label="Sentiment"
                   value={row?.sentiment === null || row?.sentiment === undefined ? "" : String(row.sentiment)}
                   placeholder="—"
                   onChange={(e) => save({ sentiment: e.target.value })}
@@ -69,7 +70,7 @@ export function Narratives({
                 <div className="label mb-1">Key themes</div>
                 <TagInput
                   values={row?.keyThemes ?? []}
-                  placeholder="Add theme"
+                  placeholder="Add theme" label="Key themes"
                   onChange={(v) => save({ keyThemes: v })}
                 />
               </div>

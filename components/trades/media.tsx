@@ -100,7 +100,7 @@ export function MediaPanel({
           dragging ? "border-[var(--accent)] bg-[var(--accent-quiet)]" : "border-[var(--line-strong)] hover:bg-[var(--bg-hover)]",
         )}
       >
-        <span className="text-12 text-[var(--text-secondary)]">
+        <span className="text-12 [color:var(--text-secondary)]">
           {busy ? "Uploading…" : "Drop a recording or screenshot here"}
         </span>
         <input
@@ -157,7 +157,7 @@ export function MediaPanel({
                     className="w-full rounded-[var(--r-std)] border border-[var(--line)]"
                   />
                 )}
-                <p className="text-11 text-[var(--text-tertiary)] mt-1 num">
+                <p className="text-11 [color:var(--text-tertiary)] mt-1 num">
                   {m.capturedAt ? localTime(m.capturedAt) : ""}
                   {m.sizeBytes ? ` · ${Math.round(m.sizeBytes / 1024 / 1024 * 10) / 10} MB` : ""}
                 </p>

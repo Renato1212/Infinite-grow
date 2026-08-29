@@ -43,7 +43,7 @@ export function TagPicker({
                      hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)]"
         >
           {chosen.length === 0 ? (
-            <span className="text-12 text-[var(--text-tertiary)] px-1">
+            <span className="text-12 [color:var(--text-tertiary)] px-1">
               {tags.length === 0 ? (emptyHint ?? "No tags yet") : "Add tags"}
             </span>
           ) : (
@@ -69,11 +69,11 @@ export function TagPicker({
             autoFocus value={query} onChange={(e) => setQuery(e.target.value)}
             placeholder="Filter tags"
             className="w-full h-7 px-2 mb-1 text-12 bg-transparent border-b border-[var(--line)]
-                       focus:outline-none placeholder:text-[var(--text-tertiary)]"
+                       focus:outline-none placeholder:[color:var(--text-tertiary)]"
           />
           <ul className="max-h-[200px] overflow-auto">
             {shown.length === 0 && (
-              <li className="px-2 py-2 text-11 text-[var(--text-tertiary)]">
+              <li className="px-2 py-2 text-11 [color:var(--text-tertiary)]">
                 Nothing matches. Create tags in Library.
               </li>
             )}
@@ -86,12 +86,12 @@ export function TagPicker({
                   className={cn(
                     "w-full flex items-center gap-2 px-2 h-7 rounded-[var(--r-input)] text-12 text-left",
                     local.includes(t.id)
-                      ? "bg-[var(--accent-quiet)] text-[var(--accent)]"
+                      ? "bg-[var(--accent-quiet)] [color:var(--accent)]"
                       : "hover:bg-[var(--bg-hover)]",
                   )}
                 >
                   <span className="flex-1 truncate">{t.label}</span>
-                  <span className="text-11 text-[var(--text-tertiary)]">{t.category}</span>
+                  <span className="text-11 [color:var(--text-tertiary)]">{t.category}</span>
                 </button>
               </li>
             ))}

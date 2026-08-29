@@ -52,10 +52,10 @@ export function CommandPalette({
               autoFocus
               placeholder="Jump to a day, an instrument, a study…"
               className="w-full h-12 px-4 bg-transparent text-15 border-b border-[var(--line)]
-                         placeholder:text-[var(--text-tertiary)] focus:outline-none"
+                         placeholder:[color:var(--text-tertiary)] focus:outline-none"
             />
             <Command.List className="max-h-[52vh] overflow-auto p-1.5">
-              <Command.Empty className="px-3 py-6 text-center text-12 text-[var(--text-secondary)]">
+              <Command.Empty className="px-3 py-6 text-center text-12 [color:var(--text-secondary)]">
                 Nothing matches. Type a date as 2026-03-14 to jump straight to it.
               </Command.Empty>
 
@@ -150,10 +150,10 @@ function Item({
       onSelect={onSelect}
       className="flex items-center justify-between gap-3 px-2.5 h-8 rounded-[var(--r-input)]
                  text-13 cursor-pointer data-[selected=true]:bg-[var(--accent-quiet)]
-                 data-[selected=true]:text-[var(--accent)]"
+                 data-[selected=true]:[color:var(--accent)]"
     >
       <span className="truncate">{children}</span>
-      {hint && <span className="text-11 text-[var(--text-tertiary)] shrink-0">{hint}</span>}
+      {hint && <span className="text-11 [color:var(--text-tertiary)] shrink-0">{hint}</span>}
     </Command.Item>
   );
 }

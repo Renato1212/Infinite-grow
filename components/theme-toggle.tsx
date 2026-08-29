@@ -37,7 +37,7 @@ export function ThemeToggle() {
       aria-label={`Theme: ${theme}. Click to change.`}
       title={`Theme: ${theme}`}
       className="size-7 inline-flex items-center justify-center rounded-[var(--r-input)]
-                 text-[var(--text-tertiary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]
+                 [color:var(--text-tertiary)] hover:[color:var(--text)] hover:bg-[var(--bg-hover)]
                  transition-colors duration-[var(--d-fast)]"
     >
       <span aria-hidden className="text-13">{glyph}</span>

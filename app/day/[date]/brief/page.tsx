@@ -42,7 +42,7 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
           <h1 className="text-32 font-[590] tracking-[-0.02em] leading-[1.15]">
             {dayLabel(date)}
           </h1>
-          <p className="text-13 text-[var(--text-secondary)] mt-1">
+          <p className="text-13 [color:var(--text-secondary)] mt-1">
             Preparation and plan · prepared in Europe/Lisbon time
           </p>
         </header>
@@ -66,10 +66,10 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                     <tr key={e.id} className="border-b border-[var(--line)]">
                       <td className="py-1 pr-4 mono w-14 align-top">{localTime(e.scheduledAt)}</td>
                       <td className="py-1 pr-4">{e.name}</td>
-                      <td className="py-1 pr-4 text-[var(--text-tertiary)] text-11 align-top">
+                      <td className="py-1 pr-4 [color:var(--text-tertiary)] text-11 align-top">
                         {"•".repeat(e.importance)}
                       </td>
-                      <td className="py-1 text-[var(--text-secondary)] text-12">
+                      <td className="py-1 [color:var(--text-secondary)] text-12">
                         {[e.consensus && `cons. ${e.consensus}`, e.prior && `prior ${e.prior}`,
                           e.actual && `actual ${e.actual}`].filter(Boolean).join(" · ")}
                       </td>
@@ -79,12 +79,12 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
               </table>
             )}
             {flowFlags(bundle.environment).length > 0 && (
-              <p className="text-12 text-[var(--text-secondary)]">
+              <p className="text-12 [color:var(--text-secondary)]">
                 {flowFlags(bundle.environment).join(" · ")}
               </p>
             )}
             {bundle.environment?.dynamicCalendarNote && (
-              <div className="text-13 text-[var(--text-secondary)] mt-1">
+              <div className="text-13 [color:var(--text-secondary)] mt-1">
                 <Markdown source={bundle.environment.dynamicCalendarNote} />
               </div>
             )}
@@ -100,17 +100,17 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                   <div className="flex items-baseline gap-2">
                     <h3 className="text-13 font-[590]">{humanise(n.source)}</h3>
                     {n.sentiment !== null && (
-                      <span className="text-11 num text-[var(--text-tertiary)]">
+                      <span className="text-11 num [color:var(--text-tertiary)]">
                         sentiment {n.sentiment > 0 ? "+" : ""}{n.sentiment}
                       </span>
                     )}
                     {n.keyThemes.length > 0 && (
-                      <span className="text-11 text-[var(--text-tertiary)]">
+                      <span className="text-11 [color:var(--text-tertiary)]">
                         {n.keyThemes.join(" · ")}
                       </span>
                     )}
                   </div>
-                  <div className="text-13 text-[var(--text-secondary)] max-w-[68ch]">
+                  <div className="text-13 [color:var(--text-secondary)] max-w-[68ch]">
                     <Markdown source={n.rawContent} />
                   </div>
                 </div>
@@ -133,16 +133,16 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                     className={`print-block pl-3 ${h.rank === 1 ? "border-l-2 border-l-[var(--accent)]" : "border-l border-l-[var(--line)]"}`}
                   >
                     <div className="flex items-baseline gap-2 flex-wrap">
-                      <span className="text-11 num text-[var(--text-tertiary)]">{h.rank}</span>
+                      <span className="text-11 num [color:var(--text-tertiary)]">{h.rank}</span>
                       <span className="mono text-13 font-[590]">{instrument?.symbol}</span>
                       <h3 className="text-17 font-[590]">{h.label}</h3>
                       {h.assignedProbability !== null && (
-                        <span className="text-12 num text-[var(--text-secondary)]">
+                        <span className="text-12 num [color:var(--text-secondary)]">
                           {h.assignedProbability}%
                         </span>
                       )}
                       {h.expectedMoveTicks !== null && (
-                        <span className="text-12 num text-[var(--text-secondary)]">
+                        <span className="text-12 num [color:var(--text-secondary)]">
                           {h.expectedMoveTicks} ticks
                         </span>
                       )}
@@ -155,7 +155,7 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                           const type = level ? levelTypeById.get(level.levelTypeId) : null;
                           return (
                             <li key={p.prepLevelId} className="flex items-center gap-1.5">
-                              {i > 0 && <span aria-hidden className="text-[var(--text-tertiary)]">→</span>}
+                              {i > 0 && <span aria-hidden className="[color:var(--text-tertiary)]">→</span>}
                               <span className="mono px-1.5 py-0.5 rounded-[var(--r-pill)] bg-[var(--bg-hover)] print:bg-transparent print:border print:border-[var(--line)]">
                                 {type?.label} {level ? formatPrice(level.price, tickSize) : ""}
                               </span>
@@ -173,19 +173,19 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                       {h.triggerConditions && (
                         <div className="flex gap-2">
                           <dt className="label w-[104px] shrink-0 pt-0.5">Trigger</dt>
-                          <dd className="text-[var(--text-secondary)]">{h.triggerConditions}</dd>
+                          <dd className="[color:var(--text-secondary)]">{h.triggerConditions}</dd>
                         </div>
                       )}
                       {h.invalidation && (
                         <div className="flex gap-2">
                           <dt className="label w-[104px] shrink-0 pt-0.5">Invalidation</dt>
-                          <dd className="text-[var(--text-secondary)]">{h.invalidation}</dd>
+                          <dd className="[color:var(--text-secondary)]">{h.invalidation}</dd>
                         </div>
                       )}
                       {h.plannedResponse && (
                         <div className="flex gap-2">
                           <dt className="label w-[104px] shrink-0 pt-0.5">Response</dt>
-                          <dd className="text-[var(--text-secondary)]">{h.plannedResponse}</dd>
+                          <dd className="[color:var(--text-secondary)]">{h.plannedResponse}</dd>
                         </div>
                       )}
                     </dl>
@@ -215,9 +215,9 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                     </td>
                     <td className="py-1 pr-3">{o.setupName}</td>
                     <td className="py-1 pr-3 mono">{instrumentById.get(o.instrumentId)?.symbol}</td>
-                    <td className="py-1 pr-3 text-[var(--text-secondary)]">{o.locationNote ?? "—"}</td>
-                    <td className="py-1 pr-3 text-[var(--text-secondary)]">{o.entryTrigger ?? "—"}</td>
-                    <td className="py-1 text-[var(--text-secondary)]">{o.target ?? "—"}</td>
+                    <td className="py-1 pr-3 [color:var(--text-secondary)]">{o.locationNote ?? "—"}</td>
+                    <td className="py-1 pr-3 [color:var(--text-secondary)]">{o.entryTrigger ?? "—"}</td>
+                    <td className="py-1 [color:var(--text-secondary)]">{o.target ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -236,27 +236,27 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                 <div key={prep.id} className="print-block">
                   <div className="flex items-baseline gap-2 mb-1">
                     <h3 className="mono text-15 font-[590]">{instrument?.symbol}</h3>
-                    <span className="text-12 text-[var(--text-secondary)]">{instrument?.name}</span>
+                    <span className="text-12 [color:var(--text-secondary)]">{instrument?.name}</span>
                     {prep.directionalBias && (
-                      <span className="text-11 text-[var(--text-tertiary)]">
+                      <span className="text-11 [color:var(--text-tertiary)]">
                         {humanise(prep.directionalBias)}
                         {prep.conviction !== null && ` · conviction ${prep.conviction}`}
                       </span>
                     )}
                     {prep.expectedRangeTicks !== null && (
-                      <span className="text-11 num text-[var(--text-tertiary)]">
+                      <span className="text-11 num [color:var(--text-tertiary)]">
                         expected range {prep.expectedRangeTicks} ticks
                       </span>
                     )}
                   </div>
 
                   {prep.structureNote && (
-                    <div className="text-13 max-w-[68ch] text-[var(--text-secondary)]">
+                    <div className="text-13 max-w-[68ch] [color:var(--text-secondary)]">
                       <Markdown source={prep.structureNote} />
                     </div>
                   )}
                   {prep.ladderBehaviour && (
-                    <div className="text-13 max-w-[68ch] text-[var(--text-secondary)]">
+                    <div className="text-13 max-w-[68ch] [color:var(--text-secondary)]">
                       <Markdown source={prep.ladderBehaviour} />
                     </div>
                   )}
@@ -278,8 +278,8 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                               {formatPrice(l.price, tickSize)}
                               {l.secondaryPrice && ` – ${formatPrice(l.secondaryPrice, tickSize)}`}
                             </td>
-                            <td className="py-1 pr-3 text-[var(--text-tertiary)]">{"•".repeat(l.strength)}</td>
-                            <td className="py-1 text-[var(--text-secondary)]">{l.note ?? ""}</td>
+                            <td className="py-1 pr-3 [color:var(--text-tertiary)]">{"•".repeat(l.strength)}</td>
+                            <td className="py-1 [color:var(--text-secondary)]">{l.note ?? ""}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -289,9 +289,9 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
               );
             })}
             {bundle.preps.length === 0 && (
-              <p className="text-13 text-[var(--text-secondary)]">
+              <p className="text-13 [color:var(--text-secondary)]">
                 No instruments prepared for this day.{" "}
-                <Link href={`/day/${date}`} className="text-[var(--accent)] hover:underline">
+                <Link href={`/day/${date}`} className="[color:var(--accent)] hover:underline">
                   Go and prepare it.
                 </Link>
               </p>
@@ -305,7 +305,7 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
             <ul className="text-13 space-y-1">
               {rules.map((r) => (
                 <li key={r.id} className="flex gap-2">
-                  <span aria-hidden className="text-[var(--text-tertiary)]">—</span>
+                  <span aria-hidden className="[color:var(--text-tertiary)]">—</span>
                   <span>{r.text}</span>
                 </li>
               ))}

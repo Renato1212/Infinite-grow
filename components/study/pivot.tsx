@@ -42,19 +42,22 @@ export function PivotBuilder({ facts, min }: { facts: Fact[]; min: number }) {
         <div className="flex flex-wrap items-end gap-2">
           <div>
             <div className="label mb-1">Rows</div>
-            <Select value={rowKey} className="h-8 py-0 w-[160px]" onChange={(e) => setRowKey(e.target.value)}>
+            <Select
+              aria-label="Rows" value={rowKey} className="h-8 py-0 w-[160px]" onChange={(e) => setRowKey(e.target.value)}>
               {PIVOT_DIMENSIONS.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
             </Select>
           </div>
           <div>
             <div className="label mb-1">Columns</div>
-            <Select value={colKey} className="h-8 py-0 w-[160px]" onChange={(e) => setColKey(e.target.value)}>
+            <Select
+              aria-label="Columns" value={colKey} className="h-8 py-0 w-[160px]" onChange={(e) => setColKey(e.target.value)}>
               {PIVOT_DIMENSIONS.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
             </Select>
           </div>
           <div>
             <div className="label mb-1">Metric</div>
-            <Select value={metricKey} className="h-8 py-0 w-[140px]" onChange={(e) => setMetricKey(e.target.value)}>
+            <Select
+              aria-label="Metric" value={metricKey} className="h-8 py-0 w-[140px]" onChange={(e) => setMetricKey(e.target.value)}>
               {METRICS.map((mm) => <option key={mm.key} value={mm.key}>{mm.label}</option>)}
             </Select>
           </div>
@@ -63,7 +66,7 @@ export function PivotBuilder({ facts, min }: { facts: Fact[]; min: number }) {
       </header>
 
       {m.rows.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">Nothing to pivot in this slice.</p>
+        <p className="text-12 [color:var(--text-tertiary)]">Nothing to pivot in this slice.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-12 border-collapse">
@@ -88,7 +91,7 @@ export function PivotBuilder({ facts, min }: { facts: Fact[]; min: number }) {
                   {m.cols.map((c) => {
                     const cell = m.cells.find((x) => x.row === r && x.col === c);
                     if (!cell) {
-                      return <td key={c} className="py-1 px-2 text-right text-[var(--text-tertiary)]">—</td>;
+                      return <td key={c} className="py-1 px-2 text-right [color:var(--text-tertiary)]">—</td>;
                     }
                     const value = metric.get(cell as never);
                     const intensity = Math.abs(value) / maxAbs;
@@ -103,15 +106,15 @@ export function PivotBuilder({ facts, min }: { facts: Fact[]; min: number }) {
                               metric.signed
                                 ? positive ? "var(--pos)" : "var(--neg)"
                                 : "var(--accent)"
-                            } ${Math.round(8 + intensity * 55)}%, transparent)`,
+                            } ${Math.round(8 + intensity * 22)}%, transparent)`,
                           }}
                         >
                           <div>{metric.format(value)}</div>
-                          <div className={cn(
-                            "text-[10px] text-[var(--text-tertiary)]",
-                            cell.count < min && "text-[var(--warn)]",
-                          )}>
-                            n={cell.count}
+                          {/* Full-strength colour: over a tinted cell nothing
+                              quieter clears 4.5:1 in both themes. At 10px the
+                              size already reads as a caption. */}
+                          <div className="text-[10px] opacity-90">
+                            n={cell.count}{cell.count < min && " · low"}
                           </div>
                         </div>
                       </td>
@@ -123,8 +126,8 @@ export function PivotBuilder({ facts, min }: { facts: Fact[]; min: number }) {
           </table>
         </div>
       )}
-      <p className="text-11 text-[var(--text-tertiary)] mt-2">
-        Cells below your minimum sample size of {min} show their count in amber.
+      <p className="text-11 [color:var(--text-tertiary)] mt-2">
+        Cells marked "low" are below your minimum sample size of {min}.
       </p>
     </Card>
   );

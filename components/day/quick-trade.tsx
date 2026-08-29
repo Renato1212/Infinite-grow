@@ -141,12 +141,12 @@ export function QuickTrade({
             <div className="label">Net</div>
             <div className={cn(
               "text-15 num font-[590]",
-              pnlTone(preview.netPnl) === "pos" && "text-[var(--pos)]",
-              pnlTone(preview.netPnl) === "neg" && "text-[var(--neg)]",
+              pnlTone(preview.netPnl) === "pos" && "[color:var(--pos)]",
+              pnlTone(preview.netPnl) === "neg" && "[color:var(--neg)]",
             )}>
               {signedMoney(preview.netPnl)}
             </div>
-            <div className="text-11 text-[var(--text-tertiary)] num">
+            <div className="text-11 [color:var(--text-tertiary)] num">
               {preview.ticksCaptured} ticks
             </div>
           </div>
@@ -160,7 +160,7 @@ export function QuickTrade({
           Log trade
         </Button>
       </div>
-      <p className="text-11 text-[var(--text-tertiary)] mt-2">
+      <p className="text-11 [color:var(--text-tertiary)] mt-2">
         Enter submits. Leave the exit blank for a position that is still open.
       </p>
     </Card>

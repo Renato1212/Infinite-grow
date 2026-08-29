@@ -64,17 +64,17 @@ export function Environment({
                 <span className="text-12 flex-1 min-w-0 truncate">{e.name}</span>
                 <span
                   aria-label={`Importance ${e.importance} of 3`}
-                  className="text-11 text-[var(--text-tertiary)] shrink-0"
+                  className="text-11 [color:var(--text-tertiary)] shrink-0"
                 >
                   {"•".repeat(e.importance)}
                 </span>
-                <span className="text-11 text-[var(--text-tertiary)] shrink-0 num w-[70px] text-right">
+                <span className="text-11 [color:var(--text-tertiary)] shrink-0 num w-[70px] text-right">
                   {countdownLabel(e.scheduledAt)}
                 </span>
                 <button
                   type="button" aria-label={`Remove ${e.name}`}
                   onClick={() => start(async () => { await deleteEvent(e.id, date); router.refresh(); })}
-                  className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1 shrink-0"
+                  className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1 shrink-0"
                 >×</button>
               </li>
             ))}

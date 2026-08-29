@@ -4,12 +4,14 @@ import { cn } from "@/lib/cn";
 
 /** Free text themes: comma or Enter commits, Backspace on empty removes the last. */
 export function TagInput({
-  values, onChange, placeholder, suggestions,
+  values, onChange, placeholder, suggestions, label,
 }: {
   values: string[];
   onChange: (values: string[]) => void;
   placeholder?: string;
   suggestions?: string[];
+  /** Accessible name — the visible heading sits outside this control. */
+  label?: string;
 }) {
   const [draft, setDraft] = React.useState("");
   const listId = React.useId();
@@ -39,7 +41,7 @@ export function TagInput({
             type="button"
             aria-label={`Remove ${v}`}
             onClick={() => onChange(values.filter((x) => x !== v))}
-            className="text-[var(--text-tertiary)] hover:text-[var(--neg)] leading-none px-0.5"
+            className="[color:var(--text-tertiary)] hover:[color:var(--neg)] leading-none px-0.5"
           >
             ×
           </button>
@@ -47,6 +49,7 @@ export function TagInput({
       ))}
       <input
         value={draft}
+        aria-label={label ?? placeholder ?? "Add a tag"}
         list={suggestions ? listId : undefined}
         placeholder={values.length ? "" : placeholder}
         onChange={(e) => {
@@ -60,7 +63,7 @@ export function TagInput({
         onBlur={() => commit(draft)}
         className={cn(
           "flex-1 min-w-[70px] bg-transparent text-12 px-1 py-0.5",
-          "placeholder:text-[var(--text-tertiary)] focus:outline-none",
+          "placeholder:[color:var(--text-tertiary)] focus:outline-none",
         )}
       />
       {suggestions && (

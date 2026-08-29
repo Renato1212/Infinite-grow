@@ -45,7 +45,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => { t.undo?.(); setItems((v) => v.filter((x) => x.id !== t.id)); }}
-                className="text-[var(--accent)] text-12 font-medium px-2 py-1 rounded-[var(--r-input)]
+                className="[color:var(--accent)] text-12 font-medium px-2 py-1 rounded-[var(--r-input)]
                            hover:bg-[var(--accent-quiet)]"
               >
                 Undo

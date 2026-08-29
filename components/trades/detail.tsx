@@ -56,17 +56,17 @@ export function TradeDetailView({
         <div className="min-w-0">
           <Link
             href={`/day/${date}`}
-            className="text-12 text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            className="text-12 [color:var(--text-secondary)] hover:[color:var(--accent)]"
           >
             ← {dayLabel(date)}
           </Link>
           <div className="flex flex-wrap items-baseline gap-3 mt-1">
             <h1 className="text-24 font-[590] tracking-[-0.018em] mono">{instrument?.symbol}</h1>
             <DirectionMark direction={trade.direction} />
-            <span className="mono text-15 text-[var(--text-secondary)]">
+            <span className="mono text-15 [color:var(--text-secondary)]">
               {formatPrice(trade.avgEntryPrice, tickSize)} → {formatPrice(trade.avgExitPrice, tickSize)}
             </span>
-            <span className="text-12 text-[var(--text-tertiary)] num">
+            <span className="text-12 [color:var(--text-tertiary)] num">
               {localTime(trade.entryAt)}–{trade.exitAt ? localTime(trade.exitAt) : "open"}
               {" · "}{duration(trade.durationSeconds)}
             </span>
@@ -162,8 +162,8 @@ export function TradeDetailView({
                       className={cn(
                         "h-7 px-3 rounded-[var(--r-input)] text-12 border",
                         debrief?.repeatable === o.value
-                          ? "bg-[var(--accent-quiet)] text-[var(--accent)] border-transparent font-[560]"
-                          : "border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+                          ? "bg-[var(--accent-quiet)] [color:var(--accent)] border-transparent font-[560]"
+                          : "border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
                       )}
                     >
                       {o.label}
@@ -277,6 +277,7 @@ export function TradeDetailView({
             <div className="mt-3">
               <div className="label mb-1">Against which hypothesis</div>
               <Select
+                aria-label="Against which hypothesis"
                 value={trade.hypothesisId ?? ""} placeholder="None"
                 onChange={(e) => saveTrade({ hypothesisId: e.target.value || null })}
               >
@@ -289,6 +290,7 @@ export function TradeDetailView({
             <div className="mt-3">
               <div className="label mb-1">Which opportunity</div>
               <Select
+                aria-label="Which opportunity"
                 value={trade.opportunityId ?? ""} placeholder="None"
                 onChange={(e) => saveTrade({ opportunityId: e.target.value || null })}
               >
@@ -336,7 +338,7 @@ export function TradeDetailView({
                           {formatPrice(l.price, tickSize)}
                         </span>
                         <span className="flex-1 min-w-0 truncate">{l.typeLabel}</span>
-                        {near && <span className="text-11 text-[var(--accent)]">near entry</span>}
+                        {near && <span className="text-11 [color:var(--accent)]">near entry</span>}
                       </li>
                     );
                   })}
@@ -385,7 +387,7 @@ function Executions({
   return (
     <div>
       {executions.length === 0 ? (
-        <p className="text-12 text-[var(--text-tertiary)]">
+        <p className="text-12 [color:var(--text-tertiary)]">
           No fills recorded. Add them and every money column recomputes from them.
         </p>
       ) : (
@@ -402,12 +404,12 @@ function Executions({
               <tr key={e.id} className="border-t border-[var(--line)]">
                 <td className="py-1 pr-2 mono">{localTime(e.executedAt)}</td>
                 <td className="py-1 pr-2">{e.side === "buy" ? "Buy" : "Sell"}</td>
-                <td className="py-1 pr-2 text-[var(--text-secondary)]">
+                <td className="py-1 pr-2 [color:var(--text-secondary)]">
                   {e.isEntry ? "In" : "Out"}
                 </td>
                 <td className="py-1 pr-2 mono">{formatPrice(e.price, tickSize)}</td>
                 <td className="py-1 pr-2 num">{num(e.quantity)}</td>
-                <td className="py-1 pr-2 num text-[var(--text-tertiary)]">{num(e.commission)}</td>
+                <td className="py-1 pr-2 num [color:var(--text-tertiary)]">{num(e.commission)}</td>
                 <td className="py-1">
                   <button
                     type="button" aria-label="Remove fill"
@@ -415,7 +417,7 @@ function Executions({
                       await deleteExecution(e.id, date, tradeId);
                       router.refresh();
                     })}
-                    className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                    className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
                   >×</button>
                 </td>
               </tr>

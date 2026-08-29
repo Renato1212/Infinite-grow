@@ -12,7 +12,7 @@ export default function Error({
       <h1 className="text-20 font-[590]">
         {noDatabase ? "The database isn't reachable." : "That didn't load."}
       </h1>
-      <p className="text-13 text-[var(--text-secondary)] mt-1.5 max-w-[52ch] mx-auto leading-[1.55]">
+      <p className="text-13 [color:var(--text-secondary)] mt-1.5 max-w-[52ch] mx-auto leading-[1.55]">
         {noDatabase ? (
           <>
             Check <code className="mono text-12">DATABASE_URL</code> in{" "}
@@ -24,7 +24,7 @@ export default function Error({
         )}
       </p>
       {error.digest && (
-        <p className="text-11 text-[var(--text-tertiary)] mono mt-2">{error.digest}</p>
+        <p className="text-11 [color:var(--text-tertiary)] mono mt-2">{error.digest}</p>
       )}
       <div className="mt-4">
         <Button variant="primary" onClick={reset}>Try again</Button>

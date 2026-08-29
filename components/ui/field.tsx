@@ -3,8 +3,8 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 
 const control =
-  "w-full bg-[var(--bg-raised)] text-[var(--text)] border border-[var(--line-strong)] " +
-  "rounded-[var(--r-input)] px-2.5 py-1.5 text-13 placeholder:text-[var(--text-tertiary)] " +
+  "w-full bg-[var(--bg-raised)] [color:var(--text)] border border-[var(--line-strong)] " +
+  "rounded-[var(--r-input)] px-2.5 py-1.5 text-13 placeholder:[color:var(--text-tertiary)] " +
   "transition-[border-color,box-shadow] duration-[var(--d-fast)] " +
   "[transition-timing-function:var(--ease)] " +
   "focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-quiet)] " +
@@ -43,7 +43,7 @@ export function Field({
       {label && <label htmlFor={id} className="label block mb-1">{label}</label>}
       {control}
       {hint && (
-        <p id={hintId} className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>
+        <p id={hintId} className="mt-1 text-11 [color:var(--text-tertiary)]">{hint}</p>
       )}
     </div>
   );
@@ -89,7 +89,7 @@ export const Select = React.forwardRef<
   <select ref={ref} className={cn(control, "pr-7 appearance-none bg-no-repeat", className)}
     style={{
       backgroundImage:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 4.5 6 7.5 9 4.5' fill='none' stroke='%237b828f' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 4.5 6 7.5 9 4.5' fill='none' stroke='%23676e7b' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
       backgroundPosition: "right 8px center",
     }}
     {...props}
@@ -141,8 +141,8 @@ export function Scale({
                 "size-7 rounded-[var(--r-input)] text-12 num border transition-colors",
                 "duration-[var(--d-fast)] [transition-timing-function:var(--ease)]",
                 active
-                  ? "bg-[var(--accent)] text-[var(--text-on-accent)] border-transparent"
-                  : "border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+                  ? "bg-[var(--accent)] [color:var(--text-on-accent)] border-transparent"
+                  : "border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
               )}
             >
               {n}
@@ -151,7 +151,7 @@ export function Scale({
         })}
       </div>
       {(lowLabel || highLabel) && (
-        <span className="text-11 text-[var(--text-tertiary)]">
+        <span className="text-11 [color:var(--text-tertiary)]">
           {lowLabel} → {highLabel}
         </span>
       )}

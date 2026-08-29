@@ -102,11 +102,11 @@ export function EdgeGrid({
                         className={cn(
                           "h-6 px-2 rounded-[var(--r-input)] text-11 border transition-colors",
                           "duration-[var(--d-fast)] [transition-timing-function:var(--ease)]",
-                          active && a.value === "supportive" && "bg-[var(--pos-quiet)] text-[var(--pos)] border-transparent font-[560]",
-                          active && a.value === "conflicting" && "bg-[var(--neg-quiet)] text-[var(--neg)] border-transparent font-[560]",
-                          active && a.value === "neutral" && "bg-[var(--bg-active)] text-[var(--text)] border-transparent font-[560]",
-                          active && a.value === "not_applicable" && "bg-[var(--bg-hover)] text-[var(--text-tertiary)] border-transparent",
-                          !active && "border-[var(--line)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
+                          active && a.value === "supportive" && "bg-[var(--pos-quiet)] [color:var(--pos)] border-transparent font-[560]",
+                          active && a.value === "conflicting" && "bg-[var(--neg-quiet)] [color:var(--neg)] border-transparent font-[560]",
+                          active && a.value === "neutral" && "bg-[var(--bg-active)] [color:var(--text)] border-transparent font-[560]",
+                          active && a.value === "not_applicable" && "bg-[var(--bg-hover)] [color:var(--text-tertiary)] border-transparent",
+                          !active && "border-[var(--line)] [color:var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
                         )}
                       >
                         {a.label}
@@ -124,8 +124,8 @@ export function EdgeGrid({
                       className={cn(
                         "size-6 rounded-[var(--r-input)] text-11 num border transition-colors duration-[var(--d-fast)]",
                         row.weight === w
-                          ? "bg-[var(--bg-active)] text-[var(--text)] border-transparent font-[560]"
-                          : "border-[var(--line)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
+                          ? "bg-[var(--bg-active)] [color:var(--text)] border-transparent font-[560]"
+                          : "border-[var(--line)] [color:var(--text-tertiary)] hover:bg-[var(--bg-hover)]",
                       )}
                     >
                       {w}

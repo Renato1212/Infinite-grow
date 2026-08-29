@@ -68,18 +68,19 @@ export function LevelsTable({
                     {formatPrice(l.price, tickSize)}
                     {l.secondaryPrice && ` – ${formatPrice(l.secondaryPrice, tickSize)}`}
                   </td>
-                  <td className="py-1.5 pr-3 num text-[var(--text-tertiary)]">
+                  <td className="py-1.5 pr-3 num [color:var(--text-tertiary)]">
                     {"•".repeat(l.strength)}
                   </td>
-                  <td className="py-1.5 pr-3 text-[var(--text-secondary)] max-w-[220px] truncate">
+                  <td className="py-1.5 pr-3 [color:var(--text-secondary)] max-w-[220px] truncate">
                     {l.note ?? "—"}
                   </td>
                   <td className="py-1.5 pr-3">
                     {readOnly ? (
-                      interaction ? <Pill>{humanise(interaction.reaction)}</Pill> : <span className="text-[var(--text-tertiary)]">—</span>
+                      interaction ? <Pill>{humanise(interaction.reaction)}</Pill> : <span className="[color:var(--text-tertiary)]">—</span>
                     ) : (
                       <Select
                         value={interaction?.reaction ?? ""}
+                        aria-label={`What price did at ${type?.label ?? "this level"} ${formatPrice(l.price, tickSize)}`}
                         placeholder="—"
                         className="h-7 py-0 text-12 min-w-[150px]"
                         onChange={(e) => start(async () => {
@@ -101,7 +102,7 @@ export function LevelsTable({
                     ) : (
                       <NumberInput
                         defaultValue={interaction?.reactionTicks ?? ""}
-                        aria-label="Reaction in ticks"
+                        aria-label={`Reaction in ticks at ${type?.label ?? "this level"} ${formatPrice(l.price, tickSize)}`}
                         className="h-7 py-0 w-16 text-12"
                         disabled={!interaction}
                         onBlur={(e) => start(async () => {
@@ -119,7 +120,7 @@ export function LevelsTable({
                     <td className="py-1.5">
                       <button
                         type="button"
-                        aria-label="Remove level"
+                        aria-label={`Remove ${type?.label ?? "level"} at ${formatPrice(l.price, tickSize)}`}
                         onClick={() => start(async () => {
                           const snapshot = { levelTypeId: l.levelTypeId, price: l.price, note: l.note, strength: String(l.strength), source: l.source };
                           await deleteLevel(l.id, date);
@@ -129,7 +130,7 @@ export function LevelsTable({
                             router.refresh();
                           }));
                         })}
-                        className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                        className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
                       >
                         ×
                       </button>

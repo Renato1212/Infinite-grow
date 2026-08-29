@@ -75,14 +75,14 @@ export function DayCockpit(props: CockpitProps) {
             <Link
               href={`/day/${shiftDay(date, -1)}`}
               aria-label="Previous day"
-              className="size-6 grid place-items-center rounded-[var(--r-input)] text-[var(--text-tertiary)]
-                         hover:bg-[var(--bg-hover)] hover:text-[var(--text)]"
+              className="size-6 grid place-items-center rounded-[var(--r-input)] [color:var(--text-tertiary)]
+                         hover:bg-[var(--bg-hover)] hover:[color:var(--text)]"
             >‹</Link>
             <Link
               href={`/day/${shiftDay(date, 1)}`}
               aria-label="Next day"
-              className="size-6 grid place-items-center rounded-[var(--r-input)] text-[var(--text-tertiary)]
-                         hover:bg-[var(--bg-hover)] hover:text-[var(--text)]"
+              className="size-6 grid place-items-center rounded-[var(--r-input)] [color:var(--text-tertiary)]
+                         hover:bg-[var(--bg-hover)] hover:[color:var(--text)]"
             >›</Link>
             {date !== todayISO() && (
               <TextButton onClick={() => router.push(`/day/${todayISO()}`)}>Today</TextButton>
@@ -95,7 +95,7 @@ export function DayCockpit(props: CockpitProps) {
             </Pill>
             {bundle.day.actualDayType && <Pill>{humanise(bundle.day.actualDayType)}</Pill>}
             {streak > 0 && (
-              <span className="text-11 text-[var(--text-tertiary)] num" title="Consecutive debriefed sessions">
+              <span className="text-11 [color:var(--text-tertiary)] num" title="Consecutive debriefed sessions">
                 {streak} day streak
               </span>
             )}
@@ -107,12 +107,12 @@ export function DayCockpit(props: CockpitProps) {
             <div className="label">Net</div>
             <div className={cn(
               "text-24 num font-[590] tracking-[-0.015em]",
-              pnlTone(bundle.day.netPnl) === "pos" && "text-[var(--pos)]",
-              pnlTone(bundle.day.netPnl) === "neg" && "text-[var(--neg)]",
+              pnlTone(bundle.day.netPnl) === "pos" && "[color:var(--pos)]",
+              pnlTone(bundle.day.netPnl) === "neg" && "[color:var(--neg)]",
             )}>
               {signedMoney(bundle.day.netPnl)}
             </div>
-            <div className="text-11 text-[var(--text-tertiary)] num">
+            <div className="text-11 [color:var(--text-tertiary)] num">
               {bundle.day.tradeCount} trades · {bundle.day.winCount} won
             </div>
           </div>
@@ -165,13 +165,13 @@ export function DayCockpit(props: CockpitProps) {
                 className={cn(
                   "flex items-center gap-2 h-8 px-2.5 rounded-[var(--r-input)] text-13",
                   "hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)]",
-                  p.complete ? "text-[var(--text)]" : "text-[var(--text-secondary)]",
+                  p.complete ? "[color:var(--text)]" : "[color:var(--text-secondary)]",
                 )}
               >
                 <CompletionRing value={p.ratio} label={`${p.label}, ${Math.round(p.ratio * 100)}% complete`} />
                 <span className="whitespace-nowrap">{p.label}</span>
                 {!p.required && (
-                  <span className="text-11 text-[var(--text-tertiary)]">optional</span>
+                  <span className="text-11 [color:var(--text-tertiary)]">optional</span>
                 )}
               </button>
             </li>
@@ -211,12 +211,12 @@ export function PhaseShell({
           <CompletionRing value={ratio} size={22} className="mt-1" />
           <div className="min-w-0">
             <h2 className="text-17 font-[590] tracking-[-0.014em]">
-              <span className="text-[var(--text-tertiary)] num mr-1.5">{index}</span>
+              <span className="[color:var(--text-tertiary)] num mr-1.5">{index}</span>
               {title}
             </h2>
-            <p className="text-12 text-[var(--text-secondary)] mt-0.5">{description}</p>
+            <p className="text-12 [color:var(--text-secondary)] mt-0.5">{description}</p>
             {missing.length > 0 && (
-              <p className="text-11 text-[var(--text-tertiary)] mt-1">
+              <p className="text-11 [color:var(--text-tertiary)] mt-1">
                 Still to do: {missingText}
               </p>
             )}

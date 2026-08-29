@@ -29,7 +29,7 @@ export function Sheet({
           <header className="sticky top-0 bg-[var(--bg-raised)] px-5 pt-4 pb-3 border-b border-[var(--line)]">
             <Dialog.Title className="text-15 font-[590]">{title}</Dialog.Title>
             {description && (
-              <Dialog.Description className="text-12 text-[var(--text-secondary)] mt-0.5">
+              <Dialog.Description className="text-12 [color:var(--text-secondary)] mt-0.5">
                 {description}
               </Dialog.Description>
             )}

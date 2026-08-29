@@ -62,7 +62,7 @@ export function PhaseDebriefTrades(props: CockpitProps & { phase: Phase }) {
       ) : (
         <div className="space-y-3">
           {remaining > 0 && (
-            <p className="text-12 text-[var(--text-secondary)]">
+            <p className="text-12 [color:var(--text-secondary)]">
               {remaining} of {bundle.trades.length} still to score.
             </p>
           )}
@@ -128,22 +128,22 @@ export function TradeDebriefCard({
         aria-expanded={open}
         className="w-full flex flex-wrap items-center gap-x-4 gap-y-1 text-left"
       >
-        <span aria-hidden className="text-[var(--text-tertiary)] text-12">{open ? "▾" : "▸"}</span>
+        <span aria-hidden className="[color:var(--text-tertiary)] text-12">{open ? "▾" : "▸"}</span>
         <time className="mono text-12">{localTime(trade.entryAt)}</time>
         <span className="mono text-13 font-[590]">{instrument?.symbol}</span>
         <DirectionMark direction={trade.direction} />
-        <span className="mono text-12 text-[var(--text-secondary)]">
+        <span className="mono text-12 [color:var(--text-secondary)]">
           {formatPrice(trade.avgEntryPrice, tickSize)} → {formatPrice(trade.avgExitPrice, tickSize)}
         </span>
-        <span className="text-12 text-[var(--text-tertiary)] num">{duration(trade.durationSeconds)}</span>
+        <span className="text-12 [color:var(--text-tertiary)] num">{duration(trade.durationSeconds)}</span>
         <span className={cn(
           "num font-[560] text-13",
-          tone === "pos" && "text-[var(--pos)]", tone === "neg" && "text-[var(--neg)]",
+          tone === "pos" && "[color:var(--pos)]", tone === "neg" && "[color:var(--neg)]",
         )}>
           {signedMoney(trade.netPnl)}
         </span>
         {trade.rMultiple !== null && (
-          <span className="text-12 num text-[var(--text-secondary)]">
+          <span className="text-12 num [color:var(--text-secondary)]">
             {signedNumber(trade.rMultiple, 2)}R
           </span>
         )}
@@ -258,8 +258,8 @@ export function TradeDebriefCard({
                     className={cn(
                       "h-7 px-2.5 rounded-[var(--r-input)] text-12 border transition-colors duration-[var(--d-fast)]",
                       debrief?.repeatable === o.value
-                        ? "bg-[var(--accent-quiet)] text-[var(--accent)] border-transparent font-[560]"
-                        : "border-[var(--line-strong)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]",
+                        ? "bg-[var(--accent-quiet)] [color:var(--accent)] border-transparent font-[560]"
+                        : "border-[var(--line-strong)] [color:var(--text-secondary)] hover:bg-[var(--bg-hover)]",
                     )}
                   >
                     {o.label}
@@ -273,6 +273,7 @@ export function TradeDebriefCard({
             <div>
               <div className="label mb-1">Against which hypothesis</div>
               <Select
+                aria-label="Against which hypothesis"
                 value={trade.hypothesisId ?? ""} placeholder="None"
                 onChange={(e) => start(async () => {
                   await updateTrade(trade.id, date, { hypothesisId: e.target.value || null });
@@ -287,6 +288,7 @@ export function TradeDebriefCard({
             <div>
               <div className="label mb-1">Exit reason</div>
               <Select
+                aria-label="Exit reason"
                 value={trade.exitReason ?? ""} placeholder="—"
                 onChange={(e) => start(async () => {
                   await updateTrade(trade.id, date, { exitReason: e.target.value || null });
@@ -300,6 +302,7 @@ export function TradeDebriefCard({
             <div>
               <div className="label mb-1">Size versus plan</div>
               <Select
+                aria-label="Size versus plan"
                 value={trade.sizeVsPlan ?? ""} placeholder="—"
                 onChange={(e) => start(async () => {
                   await updateTrade(trade.id, date, { sizeVsPlan: e.target.value || null });

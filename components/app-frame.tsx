@@ -71,8 +71,8 @@ export function AppFrame({
                     "px-2.5 h-7 inline-flex items-center rounded-[var(--r-input)] text-13",
                     "transition-colors duration-[var(--d-fast)] [transition-timing-function:var(--ease)]",
                     active
-                      ? "bg-[var(--accent-quiet)] text-[var(--accent)] font-[560]"
-                      : "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]",
+                      ? "bg-[var(--accent-quiet)] [color:var(--accent)] font-[560]"
+                      : "[color:var(--text-secondary)] hover:[color:var(--text)] hover:bg-[var(--bg-hover)]",
                   )}
                 >
                   {item.label}
@@ -87,7 +87,7 @@ export function AppFrame({
             type="button"
             onClick={() => setPaletteOpen(true)}
             className="hidden sm:inline-flex items-center gap-2 h-7 pl-2.5 pr-1.5 rounded-[var(--r-input)]
-                       border border-[var(--line-strong)] text-12 text-[var(--text-tertiary)]
+                       border border-[var(--line-strong)] text-12 [color:var(--text-tertiary)]
                        hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)]"
             aria-keyshortcuts="Meta+K"
           >
@@ -104,7 +104,7 @@ export function AppFrame({
             aria-label="Settings"
             title={userEmail ?? "Settings"}
             className="size-7 inline-flex items-center justify-center rounded-[var(--r-pill)]
-                       border border-[var(--line-strong)] text-11 text-[var(--text-secondary)]
+                       border border-[var(--line-strong)] text-11 [color:var(--text-secondary)]
                        hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)] ml-1"
           >
             {(userEmail ?? "?").slice(0, 1).toUpperCase()}

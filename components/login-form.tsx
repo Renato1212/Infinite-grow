@@ -46,7 +46,7 @@ export function LoginForm() {
         {state === "sending" ? "Sending" : "Send a sign-in link"}
       </Button>
       {state === "error" && (
-        <p className="text-12 text-[var(--neg)]">{message}</p>
+        <p className="text-12 [color:var(--neg)]">{message}</p>
       )}
     </form>
   );

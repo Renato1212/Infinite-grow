@@ -17,8 +17,8 @@ import { cn } from "@/lib/cn";
 import type { EdgeDomain, Instrument, LevelType, Rule, Tag } from "@/lib/queries/reference";
 
 const TAB = "px-3 h-8 rounded-[var(--r-input)] text-13 data-[state=active]:bg-[var(--accent-quiet)] " +
-  "data-[state=active]:text-[var(--accent)] data-[state=active]:font-[560] " +
-  "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)]";
+  "data-[state=active]:[color:var(--accent)] data-[state=active]:font-[560] " +
+  "[color:var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors duration-[var(--d-fast)]";
 
 export function LibraryView({
   instruments, domains, levelTypes, tags, rules,
@@ -30,7 +30,7 @@ export function LibraryView({
     <div className="min-w-0 max-w-[1000px]">
       <header className="mb-4">
         <h1 className="text-24 font-[590] tracking-[-0.018em]">Library</h1>
-        <p className="text-12 text-[var(--text-secondary)] mt-0.5">
+        <p className="text-12 [color:var(--text-secondary)] mt-0.5">
           The vocabulary the rest of the app is written in. Nothing here is hard-coded.
         </p>
       </header>
@@ -61,7 +61,7 @@ function RulesPanel({ rules }: { rules: Rule[] }) {
 
   return (
     <Card className="p-4">
-      <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+      <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
         The rules you hold yourself to. Checked at the end of every day, which is how process
         adherence becomes a number you can plot against results.
       </p>
@@ -92,7 +92,7 @@ function RulesPanel({ rules }: { rules: Rule[] }) {
                   toast("Rule deleted, with every check of it.");
                   router.refresh();
                 })}
-                className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
               >×</button>
             </li>
           ))}
@@ -148,7 +148,7 @@ function TagsPanel({ tags }: { tags: Tag[] }) {
 
   return (
     <Card className="p-4">
-      <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+      <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
         One canonical spelling per idea. Autocomplete everywhere means the same mistake never
         ends up recorded three different ways.
       </p>
@@ -166,7 +166,7 @@ function TagsPanel({ tags }: { tags: Tag[] }) {
                     <span
                       className={cn(
                         "inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-[var(--r-pill)] text-12",
-                        cat === "error" ? "bg-[var(--neg-quiet)] text-[var(--neg)]" : "bg-[var(--bg-hover)]",
+                        cat === "error" ? "bg-[var(--neg-quiet)] [color:var(--neg)]" : "bg-[var(--bg-hover)]",
                       )}
                     >
                       {t.label}
@@ -177,7 +177,7 @@ function TagsPanel({ tags }: { tags: Tag[] }) {
                           toast(`Archived "${t.label}". Trades keep it.`);
                           router.refresh();
                         })}
-                        className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-0.5"
+                        className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-0.5"
                       >×</button>
                     </span>
                   </li>
@@ -221,7 +221,7 @@ function DomainsPanel({ domains }: { domains: EdgeDomain[] }) {
 
   return (
     <Card className="p-4">
-      <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+      <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
         The five Axia domains are rows, not an enum. Adding a sixth leaves every historical
         assessment exactly as it was — nothing is rewritten or reinterpreted.
       </p>
@@ -236,11 +236,11 @@ function DomainsPanel({ domains }: { domains: EdgeDomain[] }) {
             <div className="flex items-baseline gap-2">
               <DomainDot domainKey={d.key} />
               <span className="text-13 font-[590]">{d.label}</span>
-              <code className="text-11 mono text-[var(--text-tertiary)]">{d.key}</code>
+              <code className="text-11 mono [color:var(--text-tertiary)]">{d.key}</code>
               {d.userId && <Pill tone="accent">yours</Pill>}
             </div>
             {d.description && (
-              <p className="text-12 text-[var(--text-secondary)] mt-0.5">{d.description}</p>
+              <p className="text-12 [color:var(--text-secondary)] mt-0.5">{d.description}</p>
             )}
           </li>
         ))}
@@ -273,7 +273,7 @@ function DomainsPanel({ domains }: { domains: EdgeDomain[] }) {
           Add domain
         </Button>
       </div>
-      <p className="text-11 text-[var(--text-tertiary)] mt-1">
+      <p className="text-11 [color:var(--text-tertiary)] mt-1">
         A new domain has no colour token yet, so it shows in the neutral grey until one is added
         to app/tokens.css as <code className="mono">--dom-&lt;key&gt;</code>.
       </p>
@@ -335,7 +335,7 @@ function InstrumentsPanel({ instruments }: { instruments: Instrument[] }) {
 
   return (
     <Card className="p-4 overflow-x-auto">
-      <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+      <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
         Tick size and tick value drive every P&L figure in the app. RTH times are exchange-local;
         the app converts them for display.
       </p>
@@ -353,12 +353,12 @@ function InstrumentsPanel({ instruments }: { instruments: Instrument[] }) {
             <tr key={i.id} className="border-t border-[var(--line)]">
               <td className="py-1.5 pr-3 mono font-[560]">{i.symbol}</td>
               <td className="py-1.5 pr-3">{i.name}</td>
-              <td className="py-1.5 pr-3 text-[var(--text-secondary)]">{i.exchange}</td>
-              <td className="py-1.5 pr-3 text-[var(--text-secondary)]">{humanise(i.productGroup)}</td>
+              <td className="py-1.5 pr-3 [color:var(--text-secondary)]">{i.exchange}</td>
+              <td className="py-1.5 pr-3 [color:var(--text-secondary)]">{humanise(i.productGroup)}</td>
               <td className="py-1.5 pr-3 mono">{num(i.tickSize)}</td>
               <td className="py-1.5 pr-3 mono">{num(i.tickValue)}</td>
               <td className="py-1.5 pr-3 mono">{num(i.pointValue)}</td>
-              <td className="py-1.5 pr-3 mono text-[var(--text-secondary)]">
+              <td className="py-1.5 pr-3 mono [color:var(--text-secondary)]">
                 {i.rthOpen.slice(0, 5)}–{i.rthClose.slice(0, 5)}
               </td>
               <td className="py-1.5">
@@ -374,7 +374,7 @@ function InstrumentsPanel({ instruments }: { instruments: Instrument[] }) {
       {editing && (
         <div className="mt-4 pt-4 border-t border-[var(--line)]">
           <h3 className="text-13 font-[590] mb-2">Your own {editing.symbol}</h3>
-          <p className="text-12 text-[var(--text-secondary)] mb-3">
+          <p className="text-12 [color:var(--text-secondary)] mb-3">
             Saves a copy you own. The shared catalogue entry is left alone.
           </p>
           <InstrumentForm

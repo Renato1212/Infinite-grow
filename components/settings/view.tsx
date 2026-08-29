@@ -36,7 +36,7 @@ export function SettingsView({
     <div className="min-w-0 max-w-[720px] space-y-3">
       <header className="mb-1">
         <h1 className="text-24 font-[590] tracking-[-0.018em]">Settings</h1>
-        {email && <p className="text-12 text-[var(--text-secondary)] mt-0.5">{email}</p>}
+        {email && <p className="text-12 [color:var(--text-secondary)] mt-0.5">{email}</p>}
       </header>
 
       <Card className="p-4 space-y-3">
@@ -77,7 +77,7 @@ export function SettingsView({
       <Card className="p-4">
         <h2 className="label mb-2">Templates</h2>
         {templates.length === 0 ? (
-          <p className="text-12 text-[var(--text-secondary)]">
+          <p className="text-12 [color:var(--text-secondary)]">
             No templates saved. Save one from an instrument prep or a hypothesis and it can be
             instantiated into any day with one click.
           </p>
@@ -86,11 +86,11 @@ export function SettingsView({
             {templates.map((t) => (
               <li key={t.id} className="flex items-center gap-2 py-1 border-b border-[var(--line)] last:border-0">
                 <span className="text-13 flex-1">{t.name}</span>
-                <span className="text-11 text-[var(--text-tertiary)]">{t.kind.replace(/_/g, " ")}</span>
+                <span className="text-11 [color:var(--text-tertiary)]">{t.kind.replace(/_/g, " ")}</span>
                 <button
                   type="button" aria-label={`Delete template ${t.name}`}
                   onClick={() => start(async () => { await deleteTemplate(t.id); router.refresh(); })}
-                  className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1"
+                  className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1"
                 >×</button>
               </li>
             ))}
@@ -100,7 +100,7 @@ export function SettingsView({
 
       <Card className="p-4">
         <h2 className="label mb-2">Teaching layer</h2>
-        <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+        <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
           The "why this matters" notes collapse themselves once a section has been used five times.
           Resetting brings them all back, expanded.
         </p>
@@ -122,7 +122,7 @@ export function SettingsView({
 
       <Card className="p-4">
         <h2 className="label mb-2">Data</h2>
-        <p className="text-12 text-[var(--text-secondary)] mb-3 max-w-[62ch]">
+        <p className="text-12 [color:var(--text-secondary)] mb-3 max-w-[62ch]">
           Everything, in the normalised shape the database holds it in. Trades, level interactions
           and day rollups, ready for a notebook.
         </p>

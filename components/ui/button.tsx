@@ -14,16 +14,16 @@ const base =
 const variants: Record<Variant, string> = {
   // One filled button per screen. Everything else is quieter than this.
   primary:
-    "bg-[var(--accent)] text-[var(--text-on-accent)] hover:bg-[var(--accent-hover)] " +
+    "bg-[var(--accent)] [color:var(--text-on-accent)] hover:bg-[var(--accent-hover)] " +
     "rounded-[var(--r-input)]",
   secondary:
-    "bg-[var(--bg-raised)] text-[var(--text)] border border-[var(--line-strong)] " +
+    "bg-[var(--bg-raised)] [color:var(--text)] border border-[var(--line-strong)] " +
     "hover:bg-[var(--bg-hover)] rounded-[var(--r-input)]",
   ghost:
-    "text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] " +
+    "[color:var(--text-secondary)] hover:[color:var(--text)] hover:bg-[var(--bg-hover)] " +
     "rounded-[var(--r-input)]",
   danger:
-    "text-[var(--neg)] hover:bg-[var(--neg-quiet)] rounded-[var(--r-input)]",
+    "[color:var(--neg)] hover:bg-[var(--neg-quiet)] rounded-[var(--r-input)]",
 };
 
 const sizes: Record<Size, string> = {
@@ -54,7 +54,7 @@ export function TextButton({ className, ...props }: React.ButtonHTMLAttributes<H
     <button
       type="button"
       className={cn(
-        "text-13 text-[var(--text-secondary)] hover:text-[var(--accent)] underline-offset-2",
+        "text-13 [color:var(--text-secondary)] hover:[color:var(--accent)] underline-offset-2",
         "hover:underline transition-colors duration-[var(--d-fast)] rounded-sm",
         className,
       )}

@@ -58,7 +58,7 @@ export function TradesTable({
               <tr key={t.id} className="border-t border-[var(--line)] hover:bg-[var(--bg-hover)]">
                 <td className="px-2 py-1.5 mono whitespace-nowrap">{localTime(t.entryAt)}</td>
                 <td className="px-2 py-1.5 mono whitespace-nowrap">{t.exitAt ? localTime(t.exitAt) : "open"}</td>
-                <td className="px-2 py-1.5 num text-[var(--text-secondary)] whitespace-nowrap">
+                <td className="px-2 py-1.5 num [color:var(--text-secondary)] whitespace-nowrap">
                   {duration(t.durationSeconds)}
                 </td>
                 <td className="px-2 py-1.5 mono">{instrument?.symbol ?? "—"}</td>
@@ -70,14 +70,14 @@ export function TradesTable({
                 <td className="px-2 py-1.5 num">{t.rMultiple === null ? "—" : signedNumber(t.rMultiple, 2)}</td>
                 <td className={cn(
                   "px-2 py-1.5 num font-[560] whitespace-nowrap",
-                  tone === "pos" && "text-[var(--pos)]",
-                  tone === "neg" && "text-[var(--neg)]",
+                  tone === "pos" && "[color:var(--pos)]",
+                  tone === "neg" && "[color:var(--neg)]",
                 )}>
                   {signedMoney(t.netPnl)}
                 </td>
                 <td className="px-2 py-1.5">
                   {t.planned
-                    ? <span className="text-[var(--text-tertiary)]">planned</span>
+                    ? <span className="[color:var(--text-tertiary)]">planned</span>
                     : <Pill tone="warn">improvised</Pill>}
                 </td>
                 <td className="px-2 py-1.5">
@@ -90,13 +90,13 @@ export function TradesTable({
                       {domain.label}
                     </span>
                   ) : (
-                    <span className="text-[var(--warn)]">not scored</span>
+                    <span className="[color:var(--warn)]">not scored</span>
                   )}
                 </td>
                 <td className="px-2 py-1.5 whitespace-nowrap">
                   <Link
                     href={`/trades/${t.id}`}
-                    className="text-[var(--accent)] hover:underline underline-offset-2"
+                    className="[color:var(--accent)] hover:underline underline-offset-2"
                   >
                     Open
                   </Link>
@@ -108,7 +108,7 @@ export function TradesTable({
                       toast("Trade deleted.");
                       router.refresh();
                     })}
-                    className="text-[var(--text-tertiary)] hover:text-[var(--neg)] px-1.5"
+                    className="[color:var(--text-tertiary)] hover:[color:var(--neg)] px-1.5"
                   >×</button>
                 </td>
               </tr>

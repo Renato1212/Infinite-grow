@@ -15,7 +15,7 @@ export function Section({
           <div className="min-w-0">
             {title && <h2 className="text-15 font-[590]">{title}</h2>}
             {description && (
-              <p className="text-12 text-[var(--text-secondary)] mt-0.5">{description}</p>
+              <p className="text-12 [color:var(--text-secondary)] mt-0.5">{description}</p>
             )}
           </div>
           {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}
@@ -53,7 +53,7 @@ export function EmptyState({
   return (
     <div className="py-8 px-4 text-center">
       <p className="text-13 font-[590]">{title}</p>
-      <p className="text-12 text-[var(--text-secondary)] mt-1 max-w-[46ch] mx-auto leading-[1.5]">
+      <p className="text-12 [color:var(--text-secondary)] mt-1 max-w-[46ch] mx-auto leading-[1.5]">
         {body}
       </p>
       {action && <div className="mt-3 flex justify-center">{action}</div>}
@@ -69,15 +69,15 @@ export function Stat({
   tone?: "pos" | "neg" | "flat" | "muted"; className?: string;
 }) {
   const color =
-    tone === "pos" ? "text-[var(--pos)]"
-    : tone === "neg" ? "text-[var(--neg)]"
-    : tone === "muted" ? "text-[var(--text-secondary)]"
-    : "text-[var(--text)]";
+    tone === "pos" ? "[color:var(--pos)]"
+    : tone === "neg" ? "[color:var(--neg)]"
+    : tone === "muted" ? "[color:var(--text-secondary)]"
+    : "[color:var(--text)]";
   return (
     <div className={cn("min-w-0", className)}>
       <div className="label">{label}</div>
       <div className={cn("text-20 num font-[590] mt-0.5 tracking-[-0.015em]", color)}>{value}</div>
-      {sub && <div className="text-11 text-[var(--text-tertiary)] mt-0.5 num">{sub}</div>}
+      {sub && <div className="text-11 [color:var(--text-tertiary)] mt-0.5 num">{sub}</div>}
     </div>
   );
 }
@@ -89,8 +89,8 @@ export function SampleSize({ n, min }: { n: number; min: number }) {
       className={cn(
         "text-11 num tabular-nums px-1.5 py-0.5 rounded-[var(--r-pill)]",
         thin
-          ? "text-[var(--warn)] bg-[var(--warn-quiet)]"
-          : "text-[var(--text-tertiary)] bg-[var(--bg-hover)]",
+          ? "[color:var(--warn)] bg-[var(--warn-quiet)]"
+          : "[color:var(--text-tertiary)] bg-[var(--bg-hover)]",
       )}
       title={thin ? `Below your minimum sample size of ${min}` : undefined}
     >
