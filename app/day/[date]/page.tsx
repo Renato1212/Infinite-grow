@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getDayBundle, getStreak } from "@/lib/queries/day";
+import { similarDays } from "@/lib/study/queries";
 import {
   getEdgeDomains, getInstruments, getLevelTypes, getRules, getSettings, getTags,
+  getTemplates,
 } from "@/lib/queries/reference";
 import { withUser } from "@/lib/db/client";
 import { tradeDebriefs, tradeEdgeAssessments, tradeMistakeTags, tradeTags } from "@/lib/db/schema";
@@ -29,7 +31,7 @@ export default async function DayPage({
   if (!isValidISODate(date)) notFound();
 
   const user = await requireUser();
-  const [bundle, instruments, domains, levelTypes, tags, rules, settings, streak] =
+  const [bundle, instruments, domains, levelTypes, tags, rules, settings, streak, templates] =
     await Promise.all([
       getDayBundle(user.id, date),
       getInstruments(user.id),
@@ -39,7 +41,14 @@ export default async function DayPage({
       getRules(user.id),
       getSettings(user.id),
       getStreak(user.id, date),
+      getTemplates(user.id),
     ]);
+
+  // Only meaningful once the day is classified — before that there is nothing
+  // to match on, and the component says so rather than showing an empty table.
+  const similar = bundle.day.actualDayType
+    ? await similarDays(user.id, bundle.day.id)
+    : [];
 
   const tradeIds = bundle.trades.map((t) => t.id);
   const debriefState = tradeIds.length
@@ -85,6 +94,8 @@ export default async function DayPage({
       settings={{ minSampleSize: settings.minSampleSize, timezone: settings.timezone }}
       streak={streak}
       explainers={explainers}
+      similarDays={similar}
+      templates={templates}
       assessments={debriefState.assessments}
       tradeDebriefs={debriefState.debriefs}
       tradeTagLinks={debriefState.tagLinks}

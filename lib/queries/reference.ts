@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, eq, isNull, or } from "drizzle-orm";
 import { withUser } from "@/lib/db/client";
-import { edgeDomains, instruments, levelTypes, rules, tags, userSettings } from "@/lib/db/schema";
+import { edgeDomains, instruments, levelTypes, prepTemplates, rules, tags, userSettings } from "@/lib/db/schema";
 
 export async function getInstruments(userId: string) {
   return withUser(userId, (db) =>
@@ -59,3 +59,11 @@ export type EdgeDomain = Awaited<ReturnType<typeof getEdgeDomains>>[number];
 export type LevelType = Awaited<ReturnType<typeof getLevelTypes>>[number];
 export type Tag = Awaited<ReturnType<typeof getTags>>[number];
 export type Rule = Awaited<ReturnType<typeof getRules>>[number];
+
+export async function getTemplates(userId: string) {
+  return withUser(userId, (db) =>
+    db.select().from(prepTemplates).orderBy(asc(prepTemplates.kind), asc(prepTemplates.name)),
+  );
+}
+
+export type PrepTemplate = Awaited<ReturnType<typeof getTemplates>>[number];

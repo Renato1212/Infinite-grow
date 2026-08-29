@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { PhaseShell } from "./cockpit";
 import { Explainer } from "@/components/explainer";
 import { Card, Divider, EmptyState } from "@/components/ui/surface";
+import { SimilarDays } from "./similar-days";
 import { Button, TextButton } from "@/components/ui/button";
 import { AutosaveTextarea, AutosaveSelect } from "@/components/ui/autosave";
 import { Input, Scale, Select } from "@/components/ui/field";
@@ -330,6 +331,11 @@ export function PhaseDebriefDay(props: CockpitProps & { phase: Phase }) {
             </Card>
           </div>
         </div>
+
+        <SimilarDays
+          days={props.similarDays}
+          classified={Boolean(bundle.day.actualDayType)}
+        />
       </div>
     </PhaseShell>
   );

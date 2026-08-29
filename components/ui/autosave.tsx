@@ -14,6 +14,18 @@ export function useAutosave(initial: string, save: SaveFn, draftKey?: string) {
   const [value, setValue] = React.useState(initial);
   const [status, setStatus] = React.useState<Status>("idle");
   const committed = React.useRef(initial);
+  const dirty = status === "dirty" || status === "saving" || status === "error";
+
+  // Adopt a value the server changed underneath us — applying a template,
+  // carrying levels forward — but never over an edit that is not yet saved.
+  // Without this, useState's seed wins forever and a server-side write appears
+  // to have done nothing until a full page reload.
+  React.useEffect(() => {
+    if (dirty) return;
+    if (initial === committed.current) return;
+    committed.current = initial;
+    setValue(initial);
+  }, [initial, dirty]);
 
   // Restore a draft that survived a refresh, but only if it differs from the
   // value the server just gave us.
@@ -74,23 +86,24 @@ export function SaveMark({ status }: { status: Status }) {
 }
 
 function Wrap({
-  label, status, children, className, hint,
+  label, status, children, className, hint, id, hintId,
 }: {
   label?: string; status: Status; children: React.ReactNode;
-  className?: string; hint?: string;
+  className?: string; hint?: string; id: string; hintId?: string;
 }) {
   // The status line is always present, labelled or not — a field that saves
-  // silently is a field you cannot trust. The control sits inside the <label>,
-  // so the association needs no id.
+  // silently is a field you cannot trust. It sits *beside* the <label> rather
+  // than inside it: in the label, the field's accessible name would change from
+  // "Structure" to "Structure Saved" every time it saved.
   return (
-    <label className={cn("block min-w-0", className)}>
-      <span className="flex items-baseline justify-between gap-2 mb-1 min-h-[15px]">
-        <span className="label">{label ?? ""}</span>
+    <div className={cn("min-w-0", className)}>
+      <div className="flex items-baseline justify-between gap-2 mb-1 min-h-[15px]">
+        <label htmlFor={id} className="label">{label ?? ""}</label>
         <SaveMark status={status} />
-      </span>
+      </div>
       {children}
-      {hint && <span className="block mt-1 text-11 text-[var(--text-tertiary)]">{hint}</span>}
-    </label>
+      {hint && <p id={hintId} className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>}
+    </div>
   );
 }
 
@@ -101,9 +114,12 @@ export function AutosaveTextarea({
   rows?: number; placeholder?: string; className?: string; hint?: string;
 }) {
   const a = useAutosave(initial ?? "", save, draftKey);
+  const id = React.useId();
+  const hintId = hint ? `${id}-hint` : undefined;
   return (
-    <Wrap label={label} status={a.status} className={className} hint={hint}>
+    <Wrap label={label} status={a.status} className={className} hint={hint} id={id} hintId={hintId}>
       <Textarea
+        id={id} aria-describedby={hintId}
         value={a.value} rows={rows} placeholder={placeholder}
         onChange={(e) => a.onChange(e.target.value)}
         onBlur={a.commit}
@@ -120,9 +136,12 @@ export function AutosaveInput({
 }) {
   const a = useAutosave(initial ?? "", save, draftKey);
   const C = numeric ? NumberInput : Input;
+  const id = React.useId();
+  const hintId = hint ? `${id}-hint` : undefined;
   return (
-    <Wrap label={label} status={a.status} className={className} hint={hint}>
+    <Wrap label={label} status={a.status} className={className} hint={hint} id={id} hintId={hintId}>
       <C
+        id={id} aria-describedby={hintId}
         value={a.value} placeholder={placeholder}
         onChange={(e) => a.onChange(e.target.value)}
         onBlur={a.commit}
@@ -139,9 +158,11 @@ export function AutosaveSelect({
   placeholder?: string; className?: string;
 }) {
   const a = useAutosave(initial ?? "", save);
+  const id = React.useId();
   return (
-    <Wrap label={label} status={a.status} className={className}>
+    <Wrap label={label} status={a.status} className={className} id={id}>
       <Select
+        id={id}
         value={a.value}
         placeholder={placeholder ?? "—"}
         onChange={(e) => { a.onChange(e.target.value); void a.commitWith(e.target.value); }}

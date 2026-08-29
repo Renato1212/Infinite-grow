@@ -88,32 +88,45 @@ export const dayStats = (userId: string, filter: StudyFilter) =>
 
 /**
  * Similar-day finder: weighted categorical matching, no ML. Each dimension that
- * agrees with today adds its weight; days are ranked by the total.
+ * agrees with the target day adds its weight.
+ *
+ * A dimension the target has not recorded scores nothing rather than matching
+ * every other blank day, and `max_score` reports what was actually comparable —
+ * "9 of 12" is a claim you can check; a bare score is not.
  */
 export const similarDays = (userId: string, dayId: string, limit = 8) =>
   withUserSql(userId, async (sql) => {
     const rows = await sql`
-      with target as (select * from day_facts where trading_day_id = ${dayId}::uuid)
-      select d.day, d.net_pnl, d.trade_count, d.actual_day_type, d.volume_regime,
-             d.volatility_regime, d.primary_hypothesis_outcome,
-             ( (d.actual_day_type is not distinct from t.actual_day_type)::int * 3
-             + (d.open_type is not distinct from t.open_type)::int * 2
-             + (d.volume_regime is not distinct from t.volume_regime)::int * 2
-             + (d.volatility_regime is not distinct from t.volatility_regime)::int * 2
-             + (d.flag_opex = t.flag_opex)::int
-             + (d.flag_month_end = t.flag_month_end)::int
-             + (d.flag_quarter_end = t.flag_quarter_end)::int
-             ) as score
-      from day_facts d, target t
-      where d.trading_day_id <> t.trading_day_id
-        and d.actual_day_type is not null
-      order by score desc, d.day desc
+      select * from (
+        with target as (select * from day_facts where trading_day_id = ${dayId}::uuid)
+        select d.day, d.net_pnl, d.trade_count, d.actual_day_type, d.open_type,
+               d.volume_regime, d.volatility_regime, d.primary_hypothesis_outcome,
+               ( (t.actual_day_type is not null and d.actual_day_type = t.actual_day_type)::int * 3
+               + (t.open_type is not null and d.open_type = t.open_type)::int * 2
+               + (t.volume_regime is not null and d.volume_regime = t.volume_regime)::int * 2
+               + (t.volatility_regime is not null and d.volatility_regime = t.volatility_regime)::int * 2
+               + (d.flag_opex = t.flag_opex)::int
+               + (d.flag_month_end = t.flag_month_end)::int
+               + (d.flag_quarter_end = t.flag_quarter_end)::int
+               ) as score,
+               ( (t.actual_day_type is not null)::int * 3
+               + (t.open_type is not null)::int * 2
+               + (t.volume_regime is not null)::int * 2
+               + (t.volatility_regime is not null)::int * 2
+               + 3
+               ) as max_score
+        from day_facts d, target t
+        where d.trading_day_id <> t.trading_day_id
+          and d.actual_day_type is not null
+      ) ranked
+      where score > 0
+      order by score desc, day desc
       limit ${limit}
     `;
     return rows as unknown as {
       day: string; net_pnl: string; trade_count: number; actual_day_type: string | null;
-      volume_regime: string | null; volatility_regime: string | null;
-      primary_hypothesis_outcome: string | null; score: number;
+      open_type: string | null; volume_regime: string | null; volatility_regime: string | null;
+      primary_hypothesis_outcome: string | null; score: number; max_score: number;
     }[];
   });
 

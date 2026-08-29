@@ -8,8 +8,8 @@ import { toInstant } from "@/lib/time";
 import {
   dayDebriefActions, dayDebriefs, dayEnvironment, dayNotes, hypotheses,
   hypothesisPathLevels, instrumentPrep, levelInteractions, opportunities,
-  prepLevels, prepNarratives, ruleChecks, scheduledEvents, sessionPreps,
-  tradingDays, trades,
+  prepLevels, prepNarratives, prepTemplates, ruleChecks, scheduledEvents,
+  sessionPreps, tradingDays, trades,
 } from "@/lib/db/schema";
 
 const touch = (date: string) => {
@@ -430,4 +430,146 @@ export async function linkTradeToHypothesis(tradeId: string, date: string, hypot
   );
   touch(date);
   return res;
+}
+
+/* ── templates ─────────────────────────────────────────────────────────── */
+
+/**
+ * A prep template carries the shape of your routine, not yesterday's numbers:
+ * the narrative scaffolding, your defaults, and the level *types* you always
+ * mark. Prices are the one thing that must be looked at fresh every morning, so
+ * they are deliberately not stored.
+ */
+export async function saveInstrumentPrepTemplate(prepId: string, name: string) {
+  return action(
+    z.object({ name: z.string().trim().min(1, "Name the template").max(80) }),
+    { name },
+    async (db, v, userId) => {
+      const [prep] = await db.select().from(instrumentPrep)
+        .where(eq(instrumentPrep.id, prepId)).limit(1);
+      if (!prep) throw new Error("That preparation is gone — reload and try again.");
+
+      const levels = await db.select({ levelTypeId: prepLevels.levelTypeId })
+        .from(prepLevels).where(eq(prepLevels.instrumentPrepId, prepId));
+
+      await db.insert(prepTemplates).values({
+        userId, name: v.name, kind: "instrument_prep", instrumentId: prep.instrumentId,
+        payload: {
+          structureNote: prep.structureNote,
+          ladderBehaviour: prep.ladderBehaviour,
+          vwapSlope: prep.vwapSlope,
+          chartPattern: prep.chartPattern,
+          directionalBias: prep.directionalBias,
+          conviction: prep.conviction,
+          expectedRangeTicks: prep.expectedRangeTicks,
+          levelTypeIds: [...new Set(levels.map((l) => l.levelTypeId))],
+        },
+      }).onConflictDoUpdate({
+        target: [prepTemplates.userId, prepTemplates.kind, prepTemplates.name],
+        set: { instrumentId: prep.instrumentId, payload: {
+          structureNote: prep.structureNote,
+          ladderBehaviour: prep.ladderBehaviour,
+          vwapSlope: prep.vwapSlope,
+          chartPattern: prep.chartPattern,
+          directionalBias: prep.directionalBias,
+          conviction: prep.conviction,
+          expectedRangeTicks: prep.expectedRangeTicks,
+          levelTypeIds: [...new Set(levels.map((l) => l.levelTypeId))],
+        } },
+      });
+    },
+  );
+}
+
+interface PrepTemplatePayload {
+  structureNote?: string | null;
+  ladderBehaviour?: string | null;
+  vwapSlope?: "up" | "flat" | "down" | null;
+  chartPattern?: string[];
+  directionalBias?: "short_bias" | "neutral" | "long_bias" | null;
+  conviction?: number | null;
+  expectedRangeTicks?: number | null;
+  levelTypeIds?: string[];
+}
+
+/**
+ * Instantiates a template into a prep: fills the empty fields and adds a
+ * price-less placeholder row for each level type the template carries, ready to
+ * have this morning's numbers typed in. Fields you have already written are left
+ * alone — a template should never overwrite work.
+ */
+export async function applyInstrumentPrepTemplate(
+  prepId: string, date: string, templateId: string,
+) {
+  const res = await action(
+    z.object({ templateId: S.uuid }), { templateId },
+    async (db, v, userId) => {
+      const [template] = await db.select().from(prepTemplates)
+        .where(eq(prepTemplates.id, v.templateId)).limit(1);
+      if (!template) throw new Error("That template is gone.");
+
+      const [prep] = await db.select().from(instrumentPrep)
+        .where(eq(instrumentPrep.id, prepId)).limit(1);
+      if (!prep) throw new Error("That preparation is gone — reload and try again.");
+
+      const payload = template.payload as PrepTemplatePayload;
+      const keepExisting = <T,>(current: T, incoming: T | undefined) =>
+        current === null || current === undefined ||
+        (typeof current === "string" && current.trim() === "")
+          ? incoming
+          : undefined;
+
+      await db.update(instrumentPrep).set(defined({
+        structureNote: keepExisting(prep.structureNote, payload.structureNote),
+        ladderBehaviour: keepExisting(prep.ladderBehaviour, payload.ladderBehaviour),
+        vwapSlope: keepExisting(prep.vwapSlope, payload.vwapSlope),
+        directionalBias: keepExisting(prep.directionalBias, payload.directionalBias),
+        conviction: keepExisting(prep.conviction, payload.conviction),
+        expectedRangeTicks: keepExisting(prep.expectedRangeTicks, payload.expectedRangeTicks),
+        chartPattern: prep.chartPattern.length ? undefined : payload.chartPattern,
+      })).where(eq(instrumentPrep.id, prepId));
+
+      const existing = await db.select({ levelTypeId: prepLevels.levelTypeId })
+        .from(prepLevels).where(eq(prepLevels.instrumentPrepId, prepId));
+      const already = new Set(existing.map((l) => l.levelTypeId));
+      const missing = (payload.levelTypeIds ?? []).filter((id) => !already.has(id));
+
+      if (missing.length) {
+        await db.insert(prepLevels).values(missing.map((levelTypeId, i) => ({
+          userId, instrumentPrepId: prepId, levelTypeId,
+          price: "0", note: "from template — set the price",
+          sortOrder: 500 + i,
+        })));
+      }
+      return missing.length;
+    },
+  );
+  touch(date);
+  return res;
+}
+
+export async function saveHypothesisTemplate(hypothesisId: string, name: string) {
+  return action(
+    z.object({ name: z.string().trim().min(1, "Name the template").max(80) }),
+    { name },
+    async (db, v, userId) => {
+      const [h] = await db.select().from(hypotheses)
+        .where(eq(hypotheses.id, hypothesisId)).limit(1);
+      if (!h) throw new Error("That hypothesis is gone.");
+
+      const payload = {
+        label: h.label, narrative: h.narrative,
+        triggerConditions: h.triggerConditions, invalidation: h.invalidation,
+        plannedResponse: h.plannedResponse,
+        assignedProbability: h.assignedProbability,
+        expectedMoveTicks: h.expectedMoveTicks,
+      };
+      await db.insert(prepTemplates)
+        .values({ userId, name: v.name, kind: "hypothesis", instrumentId: h.instrumentId, payload })
+        .onConflictDoUpdate({
+          target: [prepTemplates.userId, prepTemplates.kind, prepTemplates.name],
+          set: { instrumentId: h.instrumentId, payload },
+        });
+    },
+  );
 }

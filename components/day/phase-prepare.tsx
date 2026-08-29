@@ -14,8 +14,10 @@ import { useToast } from "@/components/ui/toast";
 import { ConfirmDelete } from "@/components/ui/sheet";
 import { TagInput } from "./tag-input";
 import {
-  addInstrumentPrep, carryLevelsForward, deleteInstrumentPrep, updateInstrumentPrep,
+  addInstrumentPrep, applyInstrumentPrepTemplate, carryLevelsForward,
+  deleteInstrumentPrep, saveInstrumentPrepTemplate, updateInstrumentPrep,
 } from "@/app/actions/day";
+import { NamePrompt } from "@/components/ui/name-prompt";
 import { num } from "@/lib/pnl";
 import { humanise } from "@/lib/format";
 import type { Phase } from "@/lib/completion";
@@ -124,6 +126,10 @@ export function PhasePrepare(props: CockpitProps & { phase: Phase }) {
                     interactions={bundle.interactions}
                     levelTypes={levelTypes}
                     explainer={explainers.levels}
+                    templates={props.templates.filter(
+                      (t) => t.kind === "instrument_prep" &&
+                        (t.instrumentId === null || t.instrumentId === prep.instrumentId),
+                    )}
                   />
                 );
               })}
@@ -145,7 +151,7 @@ export function PhasePrepare(props: CockpitProps & { phase: Phase }) {
 }
 
 function InstrumentPrepCard({
-  prep, date, symbol, name, tickSize, levels, interactions, levelTypes, explainer,
+  prep, date, symbol, name, tickSize, levels, interactions, levelTypes, explainer, templates,
 }: {
   prep: CockpitProps["bundle"]["preps"][number];
   date: string; symbol: string; name: string; tickSize: number;
@@ -153,11 +159,13 @@ function InstrumentPrepCard({
   interactions: CockpitProps["bundle"]["interactions"];
   levelTypes: CockpitProps["levelTypes"];
   explainer: string | null;
+  templates: CockpitProps["templates"];
 }) {
   const router = useRouter();
   const toast = useToast();
   const [, start] = React.useTransition();
   const [confirming, setConfirming] = React.useState(false);
+  const [naming, setNaming] = React.useState(false);
   const [open, setOpen] = React.useState(true);
 
   const save = async (patch: Record<string, unknown>) => {
@@ -184,7 +192,30 @@ function InstrumentPrepCard({
             {levels.length} level{levels.length === 1 ? "" : "s"}
           </span>
         </button>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {templates.length > 0 && (
+            <Select
+              value="" placeholder="Apply template"
+              className="h-7 py-0 w-[150px] text-12"
+              aria-label={`Apply a template to ${symbol}`}
+              onChange={(e) => {
+                const id = e.target.value;
+                if (!id) return;
+                start(async () => {
+                  const res = await applyInstrumentPrepTemplate(prep.id, date, id);
+                  toast(res.ok
+                    ? res.data === 0
+                      ? "Template applied. Nothing was overwritten."
+                      : `Template applied — ${res.data} level${res.data === 1 ? "" : "s"} to price up.`
+                    : res.error);
+                  router.refresh();
+                });
+              }}
+            >
+              {templates.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+            </Select>
+          )}
+          <TextButton onClick={() => setNaming(true)}>Save as template</TextButton>
           <TextButton
             onClick={() => start(async () => {
               const res = await carryLevelsForward(prep.id, date, prep.instrumentId);
@@ -269,6 +300,19 @@ function InstrumentPrepCard({
           </div>
         </div>
       )}
+
+      <NamePrompt
+        open={naming} onOpenChange={setNaming}
+        title={`Save the ${symbol} routine as a template`}
+        description="Stores your notes, defaults and the level types you mark — not this morning's prices."
+        placeholder={`${symbol} morning routine`}
+        initial={`${symbol} morning routine`}
+        onConfirm={(templateName) => start(async () => {
+          const res = await saveInstrumentPrepTemplate(prep.id, templateName);
+          toast(res.ok ? `Saved "${templateName}".` : res.error);
+          router.refresh();
+        })}
+      />
 
       <ConfirmDelete
         open={confirming} onOpenChange={setConfirming}

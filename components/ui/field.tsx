@@ -15,8 +15,11 @@ export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLab
 }
 
 /**
- * The control lives inside the <label>, so it is associated with its text
- * implicitly — no id plumbing, and screen readers and `getByLabel` both work.
+ * Labels the control explicitly and describes it separately: the hint belongs in
+ * aria-describedby, not in the accessible name. Putting it inside the <label>
+ * makes the field announce as "Expected range ticks" rather than "Expected range".
+ *
+ * The control is cloned with the generated id, so callers pass nothing.
  */
 export function Field({
   label, hint, htmlFor, children, className,
@@ -24,12 +27,25 @@ export function Field({
   label?: string; hint?: string; htmlFor?: string;
   children: React.ReactNode; className?: string;
 }) {
+  const generated = React.useId();
+  const id = htmlFor ?? generated;
+  const hintId = hint ? `${id}-hint` : undefined;
+
+  const control = React.isValidElement(children) && !htmlFor
+    ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+        id,
+        "aria-describedby": hintId,
+      })
+    : children;
+
   return (
-    <label className={cn("block min-w-0", className)} htmlFor={htmlFor}>
-      {label && <span className="label block mb-1">{label}</span>}
-      {children}
-      {hint && <span className="block mt-1 text-11 text-[var(--text-tertiary)]">{hint}</span>}
-    </label>
+    <div className={cn("min-w-0", className)}>
+      {label && <label htmlFor={id} className="label block mb-1">{label}</label>}
+      {control}
+      {hint && (
+        <p id={hintId} className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>
+      )}
+    </div>
   );
 }
 

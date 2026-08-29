@@ -12,8 +12,10 @@ import { Sheet, ConfirmDelete } from "@/components/ui/sheet";
 import { useToast } from "@/components/ui/toast";
 import {
   addHypothesis, addOpportunity, deleteHypothesis, deleteOpportunity,
-  setHypothesisPath, updateHypothesis, updateOpportunity, upsertSessionPrep,
+  saveHypothesisTemplate, setHypothesisPath, updateHypothesis, updateOpportunity,
+  upsertSessionPrep,
 } from "@/app/actions/day";
+import { NamePrompt } from "@/components/ui/name-prompt";
 import { formatPrice, num } from "@/lib/pnl";
 import { humanise } from "@/lib/format";
 import type { Phase } from "@/lib/completion";
@@ -201,6 +203,7 @@ export function PhasePlan(props: CockpitProps & { phase: Phase }) {
         open={newHypOpen} onOpenChange={setNewHypOpen}
         dayId={bundle.day.id} date={date} instruments={instrumentChoices}
         nextRank={bundle.hypotheses.length + 1}
+        templates={props.templates.filter((t) => t.kind === "hypothesis")}
       />
       <NewOpportunitySheet
         open={newOppOpen} onOpenChange={setNewOppOpen}
@@ -225,7 +228,9 @@ function HypothesisCard({
   const router = useRouter();
   const [, start] = React.useTransition();
   const [confirming, setConfirming] = React.useState(false);
+  const [naming, setNaming] = React.useState(false);
   const [pathOpen, setPathOpen] = React.useState(false);
+  const toast = useToast();
 
   const save = async (patch: Record<string, unknown>) => {
     await updateHypothesis(h.id, date, patch);
@@ -251,6 +256,7 @@ function HypothesisCard({
           {h.outcome && <Pill tone={h.outcome === "played_out" ? "pos" : h.outcome === "invalidated" ? "neg" : "neutral"}>
             {humanise(h.outcome)}
           </Pill>}
+          <TextButton onClick={() => setNaming(true)}>Save as template</TextButton>
           <button
             type="button" aria-label={`Remove ${h.label}`}
             onClick={() => setConfirming(true)}
@@ -352,6 +358,18 @@ function HypothesisCard({
         )}
       </Sheet>
 
+      <NamePrompt
+        open={naming} onOpenChange={setNaming}
+        title="Save this hypothesis as a template"
+        description="Keeps the narrative, trigger, invalidation and planned response, ready to instantiate on a future day."
+        initial={h.label}
+        onConfirm={(templateName) => start(async () => {
+          const res = await saveHypothesisTemplate(h.id, templateName);
+          toast(res.ok ? `Saved "${templateName}".` : res.error);
+          router.refresh();
+        })}
+      />
+
       <ConfirmDelete
         open={confirming} onOpenChange={setConfirming}
         what="hypothesis" phrase="delete"
@@ -409,17 +427,19 @@ function PathPicker({
 }
 
 function NewHypothesisSheet({
-  open, onOpenChange, dayId, date, instruments, nextRank,
+  open, onOpenChange, dayId, date, instruments, nextRank, templates,
 }: {
   open: boolean; onOpenChange: (v: boolean) => void;
   dayId: string; date: string;
   instruments: CockpitProps["instruments"]; nextRank: number;
+  templates: CockpitProps["templates"];
 }) {
   const router = useRouter();
   const toast = useToast();
   const [, start] = React.useTransition();
   const [form, setForm] = React.useState({
-    instrumentId: "", label: "", rank: String(nextRank), narrative: "", invalidation: "",
+    instrumentId: "", label: "", rank: String(nextRank), narrative: "",
+    triggerConditions: "", invalidation: "", plannedResponse: "",
   });
 
   React.useEffect(() => {
@@ -429,10 +449,28 @@ function NewHypothesisSheet({
     }));
   }, [open, nextRank, instruments]);
 
+  const applyTemplate = (id: string) => {
+    const template = templates.find((t) => t.id === id);
+    if (!template) return;
+    const p = template.payload as Record<string, string | null>;
+    setForm((f) => ({
+      ...f,
+      instrumentId: template.instrumentId ?? f.instrumentId,
+      label: p.label ?? f.label,
+      narrative: p.narrative ?? "",
+      triggerConditions: p.triggerConditions ?? "",
+      invalidation: p.invalidation ?? "",
+      plannedResponse: p.plannedResponse ?? "",
+    }));
+  };
+
   const submit = () => start(async () => {
     const res = await addHypothesis(dayId, date, form);
     if (!res.ok) { toast(res.error); return; }
-    setForm({ instrumentId: form.instrumentId, label: "", rank: String(nextRank + 1), narrative: "", invalidation: "" });
+    setForm({
+      instrumentId: form.instrumentId, label: "", rank: String(nextRank + 1),
+      narrative: "", triggerConditions: "", invalidation: "", plannedResponse: "",
+    });
     onOpenChange(false);
     router.refresh();
   });
@@ -452,6 +490,16 @@ function NewHypothesisSheet({
       }
     >
       <div className="space-y-3">
+        {templates.length > 0 && (
+          <Field label="Start from" hint="Fills the fields below; edit anything before saving.">
+            <Select
+              value="" placeholder="Blank"
+              onChange={(e) => applyTemplate(e.target.value)}
+            >
+              {templates.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+            </Select>
+          </Field>
+        )}
         <div className="grid grid-cols-[1fr_80px] gap-3">
           <Field label="Instrument">
             <Select
@@ -481,11 +529,25 @@ function NewHypothesisSheet({
                        focus:ring-2 focus:ring-[var(--accent-quiet)]"
           />
         </Field>
+        <Field label="Trigger conditions">
+          <Input
+            value={form.triggerConditions}
+            placeholder="Acceptance through the IBH on increasing volume"
+            onChange={(e) => setForm({ ...form, triggerConditions: e.target.value })}
+          />
+        </Field>
         <Field label="Invalidation">
           <Input
             value={form.invalidation}
             placeholder="Acceptance above the ONH for more than 15 minutes"
             onChange={(e) => setForm({ ...form, invalidation: e.target.value })}
+          />
+        </Field>
+        <Field label="Planned response">
+          <Input
+            value={form.plannedResponse}
+            placeholder="Half size at the level, add only on a retest that holds"
+            onChange={(e) => setForm({ ...form, plannedResponse: e.target.value })}
           />
         </Field>
       </div>
