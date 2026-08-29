@@ -10,6 +10,11 @@ across days six months from now.
 
 ---
 
+**Deployed.** Supabase (eu-west-3) and Vercel are provisioned and the schema is
+live; [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) lists the four things that still
+need your hands — the database password, the env vars, the auth redirect URLs,
+and turning off public sign-ups once you have an account.
+
 ## Running it
 
 ```bash

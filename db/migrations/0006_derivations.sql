@@ -3,7 +3,7 @@
 -- checks the two agree.
 
 create or replace function public.recompute_trade(p_trade_id uuid) returns void
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 declare
   t            trades%rowtype;
   inst         instruments%rowtype;
@@ -93,7 +93,7 @@ begin
 end $$;
 
 create or replace function public.trade_executions_after() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   perform public.recompute_trade(coalesce(new.trade_id, old.trade_id));
   return coalesce(new, old);
@@ -106,7 +106,7 @@ create trigger trade_executions_recompute
 
 -- Day aggregates. Denormalised on trading_days, maintained here only.
 create or replace function public.recompute_trading_day(p_day_id uuid) returns void
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   update trading_days d set
     gross_pnl   = coalesce(s.gross, 0),
@@ -124,7 +124,7 @@ begin
 end $$;
 
 create or replace function public.trades_after() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   if tg_op = 'UPDATE' and old.trading_day_id is distinct from new.trading_day_id then
     perform public.recompute_trading_day(old.trading_day_id);
@@ -154,19 +154,9 @@ create trigger trades_recompute
   after insert or update or delete on trades
   for each row execute function public.trades_after();
 
--- Guard: the client may not write derived money columns directly.
-create or replace function public.trades_guard_derived() returns trigger
-language plpgsql as $$
-begin
-  if current_setting('app.recomputing', true) = 'on' then
-    return new;
-  end if;
-  return new;
-end $$;
-
 -- Process adherence becomes a number.
 create or replace function public.recompute_process_adherence(p_day_id uuid) returns void
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   update trading_days d set
     process_adherence_pct = s.pct,
@@ -182,7 +172,7 @@ begin
 end $$;
 
 create or replace function public.rule_checks_after() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   perform public.recompute_process_adherence(coalesce(new.trading_day_id, old.trading_day_id));
   return coalesce(new, old);

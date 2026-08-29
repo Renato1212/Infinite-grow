@@ -4,7 +4,7 @@
 -- everyone and writable by no one.
 
 create or replace function public.set_updated_at() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   new.updated_at = now();
   return new;
@@ -25,7 +25,6 @@ declare
     'day_debriefs','day_debrief_actions','rule_checks','reviews','saved_views',
     'user_settings','prep_templates'
   ];
-  uid_col text;
 begin
   foreach t in array all_tables loop
     execute format('alter table %I enable row level security', t);
@@ -33,14 +32,12 @@ begin
 
     -- updated_at maintenance (skip tables without the column)
     if exists (select 1 from information_schema.columns
-               where table_name = t and column_name = 'updated_at') then
+               where table_schema = 'public' and table_name = t and column_name = 'updated_at') then
       execute format('drop trigger if exists %I on %I', t || '_set_updated_at', t);
       execute format(
         'create trigger %I before update on %I for each row execute function public.set_updated_at()',
         t || '_set_updated_at', t);
     end if;
-
-    uid_col := case when t = 'user_settings' then 'user_id' else 'user_id' end;
 
     execute format('drop policy if exists %I on %I', t || '_select', t);
     execute format('drop policy if exists %I on %I', t || '_insert', t);
@@ -49,23 +46,20 @@ begin
 
     if t = any(shared_tables) then
       execute format(
-        'create policy %I on %I for select using (%I is null or %I = auth.uid())',
-        t || '_select', t, uid_col, uid_col);
+        'create policy %I on %I for select using (user_id is null or user_id = auth.uid())',
+        t || '_select', t);
     else
       execute format(
-        'create policy %I on %I for select using (%I = auth.uid())',
-        t || '_select', t, uid_col);
+        'create policy %I on %I for select using (user_id = auth.uid())', t || '_select', t);
     end if;
 
     execute format(
-      'create policy %I on %I for insert with check (%I = auth.uid())',
-      t || '_insert', t, uid_col);
+      'create policy %I on %I for insert with check (user_id = auth.uid())', t || '_insert', t);
     execute format(
-      'create policy %I on %I for update using (%I = auth.uid()) with check (%I = auth.uid())',
-      t || '_update', t, uid_col, uid_col);
+      'create policy %I on %I for update using (user_id = auth.uid()) with check (user_id = auth.uid())',
+      t || '_update', t);
     execute format(
-      'create policy %I on %I for delete using (%I = auth.uid())',
-      t || '_delete', t, uid_col);
+      'create policy %I on %I for delete using (user_id = auth.uid())', t || '_delete', t);
 
     execute format('grant select, insert, update, delete on %I to authenticated', t);
   end loop;
