@@ -17,4 +17,22 @@ export default defineConfig({
       : {},
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+
+  // Always the dev server, including in CI: `next start` runs as production,
+  // where lib/auth.ts deliberately ignores DEV_USER_ID, and there is no signed-in
+  // user without a mail round trip. Weakening that guard to suit the tests would
+  // defeat the point of it. The production build is verified by its own CI step
+  // and by Vercel on every push.
+  //
+  // Locally this reuses whatever dev server is already running.
+  webServer: process.env.E2E_BASE_URL
+    ? undefined
+    : {
+        command: "npx next dev -p 3111",
+        url: "http://localhost:3111/login",
+        reuseExistingServer: !process.env.CI,
+        timeout: 180_000,
+        stdout: "pipe",
+        stderr: "pipe",
+      },
 });

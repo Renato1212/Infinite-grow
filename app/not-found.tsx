@@ -10,7 +10,7 @@ export default function NotFound() {
       </p>
       <Link
         href={`/day/${todayISO()}`}
-        className="inline-block mt-4 text-13 [color:var(--accent)] hover:underline underline-offset-2"
+        className="inline-block mt-4 text-13 [color:var(--accent)] underline underline-offset-2"
       >
         Go to today
       </Link>

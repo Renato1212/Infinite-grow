@@ -291,7 +291,12 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
             {bundle.preps.length === 0 && (
               <p className="text-13 [color:var(--text-secondary)]">
                 No instruments prepared for this day.{" "}
-                <Link href={`/day/${date}`} className="[color:var(--accent)] hover:underline">
+                {/* Underlined, not just coloured: this link sits inside a
+                    sentence, where colour alone is not a distinguishing cue. */}
+                <Link
+                  href={`/day/${date}`}
+                  className="[color:var(--accent)] underline underline-offset-2"
+                >
                   Go and prepare it.
                 </Link>
               </p>
