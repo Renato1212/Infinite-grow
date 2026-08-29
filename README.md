@@ -65,6 +65,12 @@ seeds a book, and runs both Playwright suites against it.
   the same arithmetic in two languages; this pins them together across scale-ins,
   scale-outs, 64ths on the note complex and R multiples.
 
+`lib/contrast.test.ts` needs no database. It parses `app/tokens.css` and checks
+every foreground against every surface it can land on — plain, under a hover or
+keyboard-cursor wash, and inside a pill's own tint on top of those. The browser
+suite only sees the combinations the seeded data happens to render, which is how
+three separate contrast bugs reached CI one at a time.
+
 ---
 
 ## The daily loop

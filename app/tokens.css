@@ -16,7 +16,7 @@
   --g6:  #d3d7de;
   --g7:  #bfc4cd;
   --g8:  #9aa1ad;
-  --g9:  #676e7b;
+  --g9:  #646b77;
   --g10: #4a515c;
   --g11: #3f454e;
   --g12: #14171c;
@@ -26,7 +26,7 @@
   --bg-raised:     #ffffff;
   --bg-sunken:     var(--g3);
   --bg-hover:      rgb(20 23 28 / 0.035);
-  --bg-active:     rgb(20 23 28 / 0.06);
+  --bg-active:     rgb(20 23 28 / 0.05);
 
   --text:          var(--g12);
   --text-secondary:var(--g10);
@@ -38,16 +38,16 @@
 
   --accent:        #2559cc;
   --accent-hover:  #1f4bb0;
-  --accent-quiet:  rgb(37 89 204 / 0.10);
+  --accent-quiet:  rgb(37 89 204 / 0.08);
   --accent-line:   rgb(37 89 204 / 0.30);
   --focus:         #2559cc;
 
   --pos:           #2b7050;
-  --pos-quiet:     rgb(43 112 80 / 0.10);
+  --pos-quiet:     rgb(43 112 80 / 0.08);
   --neg:           #a33b3b;
-  --neg-quiet:     rgb(163 59 59 / 0.10);
-  --warn:          #8a6320;
-  --warn-quiet:    rgb(138 99 32 / 0.10);
+  --neg-quiet:     rgb(163 59 59 / 0.08);
+  --warn:          #825d1e;
+  --warn-quiet:    rgb(130 93 30 / 0.08);
 
   /* Edge domains — low chroma, only ever a dot or a 2px rule */
   --dom-economic_data:    #b08028;
@@ -99,7 +99,7 @@
     --g6:  #2c333b;
     --g7:  #3a424c;
     --g8:  #545d68;
-    --g9:  #8b939f;
+    --g9:  #8d95a0;
     --g10: #9aa3ae;
     --g11: #c6ccd4;
     --g12: #f2f4f7;
@@ -118,19 +118,19 @@
     --line: rgb(255 255 255 / 0.09);
     --line-strong: rgb(255 255 255 / 0.16);
 
-    --accent: #5b8dff;
-    --accent-hover: #7aa3ff;
-    --accent-quiet: rgb(91 141 255 / 0.14);
-    --accent-line: rgb(91 141 255 / 0.36);
-    --focus: #7aa3ff;
+    --accent: #749eff;
+    --accent-hover: #8fb2ff;
+    --accent-quiet: rgb(116 158 255 / 0.10);
+    --accent-line: rgb(116 158 255 / 0.36);
+    --focus: #8fb2ff;
     --text-on-accent: #06101f;
 
-    --pos: #5aa987;
-    --pos-quiet: rgb(90 169 135 / 0.14);
-    --neg: #dd7a7a;
-    --neg-quiet: rgb(221 122 122 / 0.14);
+    --pos: #66af90;
+    --pos-quiet: rgb(102 175 144 / 0.10);
+    --neg: #e08787;
+    --neg-quiet: rgb(224 135 135 / 0.10);
     --warn: #c9a45c;
-    --warn-quiet: rgb(201 164 92 / 0.14);
+    --warn-quiet: rgb(201 164 92 / 0.10);
 
     --dom-economic_data:    #cfa254;
     --dom-central_banks:    #a68fdd;
@@ -145,7 +145,7 @@
 :root[data-theme="dark"] {
   --g1:  #0c0e11; --g2:  #111418; --g3:  #161a1f; --g4:  #1c2127;
   --g5:  #232930; --g6:  #2c333b; --g7:  #3a424c; --g8:  #545d68;
-  --g9:  #8b939f; --g10: #9aa3ae; --g11: #c6ccd4; --g12: #f2f4f7;
+  --g9:  #8d95a0; --g10: #9aa3ae; --g11: #c6ccd4; --g12: #f2f4f7;
 
   --bg: var(--g1); --bg-subtle: var(--g2); --bg-raised: var(--g3); --bg-sunken: #080a0c;
   --bg-hover: rgb(255 255 255 / 0.045); --bg-active: rgb(255 255 255 / 0.075);
@@ -153,13 +153,13 @@
   --text: var(--g12); --text-secondary: var(--g10); --text-tertiary: var(--g9);
   --line: rgb(255 255 255 / 0.09); --line-strong: rgb(255 255 255 / 0.16);
 
-  --accent: #5b8dff; --accent-hover: #7aa3ff;
-  --accent-quiet: rgb(91 141 255 / 0.14); --accent-line: rgb(91 141 255 / 0.36);
-  --focus: #7aa3ff; --text-on-accent: #06101f;
+  --accent: #749eff; --accent-hover: #8fb2ff;
+  --accent-quiet: rgb(116 158 255 / 0.10); --accent-line: rgb(116 158 255 / 0.36);
+  --focus: #8fb2ff; --text-on-accent: #06101f;
 
-  --pos: #5aa987; --pos-quiet: rgb(90 169 135 / 0.14);
-  --neg: #dd7a7a; --neg-quiet: rgb(221 122 122 / 0.14);
-  --warn: #c9a45c; --warn-quiet: rgb(201 164 92 / 0.14);
+  --pos: #66af90; --pos-quiet: rgb(102 175 144 / 0.10);
+  --neg: #e08787; --neg-quiet: rgb(224 135 135 / 0.10);
+  --warn: #c9a45c; --warn-quiet: rgb(201 164 92 / 0.10);
 
   --dom-economic_data: #cfa254; --dom-central_banks: #a68fdd;
   --dom-technicals: #56aaad; --dom-flow_events: #8b9dc8;

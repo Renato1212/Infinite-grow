@@ -89,7 +89,7 @@ export const Select = React.forwardRef<
   <select ref={ref} className={cn(control, "pr-7 appearance-none bg-no-repeat", className)}
     style={{
       backgroundImage:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 4.5 6 7.5 9 4.5' fill='none' stroke='%23676e7b' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 4.5 6 7.5 9 4.5' fill='none' stroke='%23646b77' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>\")",
       backgroundPosition: "right 8px center",
     }}
     {...props}
