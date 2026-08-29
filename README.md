@@ -10,10 +10,11 @@ across days six months from now.
 
 ---
 
-**Deployment.** The Supabase project is live in eu-west-3 with the full schema,
-RLS, triggers, seeded catalogue and media bucket, verified end to end against the
-real database. Vercel needs finishing by hand.
-[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) has the five remaining steps.
+**Deployed at https://deliberate-practice.vercel.app.** The Supabase project is
+live in eu-west-3 with the full schema, RLS, triggers, seeded catalogue and media
+bucket, verified end to end against the real database; Vercel builds from this
+repository on every push. Three steps remain before you can sign in —
+[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) has them.
 
 ## Running it
 

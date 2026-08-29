@@ -1,11 +1,10 @@
 # Deployment
 
-The Supabase project is provisioned and its whole schema is live.
+The Supabase project is provisioned and its whole schema is live, and Vercel is
+building from this repository — the app is deployed at
+**https://deliberate-practice.vercel.app**.
 
-Vercel is where this stops short: a project was created, but the connection used
-to create it cannot deploy or even read it back, so the Git link has to be
-finished by hand. That, plus a secret only you can read and two settings only
-you can change, is what "Five things to finish" covers.
+What is left is a secret only you can read and two settings only you can change.
 
 ---
 
@@ -18,7 +17,7 @@ you can change, is what "Five things to finish" covers.
 | Storage | private `media` bucket, 500 MB per file, owner-scoped policies |
 | Security advisors | zero findings |
 | Verified | a smoke test ran against the live database: a four-fill scale-in/scale-out trade produced the right average entry, peak size, ticks, net P&L and R multiple; the day aggregate and equity-curve triggers fired; a second user saw nothing through either the tables or the views; and it cleaned up after itself |
-| Vercel | project `deliberate-practice` created (`prj_fZBambI6XiIj6WV3SvBn8HsIinbP`) — **but see step 0**: its Git link could not be completed from here |
+| Vercel | project `deliberate-practice` linked to this repository and deploying on every push. GitHub reports the commit status `Vercel — Deployment has completed`, and the app is served at https://deliberate-practice.vercel.app |
 
 **No sample data was seeded into production, deliberately.** This app exists to
 build one honest dataset about your own trading; forty days of invented trades
@@ -29,26 +28,10 @@ production once and then delete those days.
 
 ---
 
-## Five things to finish
+## Three things to finish
 
-### 0. Connect the repository in Vercel
-
-A Vercel project named `deliberate-practice` was created, but the connection
-used to create it cannot read it back or deploy it — the API answers 409
-"already exists" to a re-create, 404 to a fetch, and 403 to listing its
-deployments. That is a scope limit on the integration, not something the code
-can work around, so the Git link has to be finished in the dashboard.
-
-Vercel dashboard → the `deliberate-practice` project → **Settings → Git →
-Connect Git Repository** → `Renato1212/Infinite-grow`, production branch
-`claude/build-this-3pl69t`.
-
-If the project is not visible or is in a state you would rather not inherit,
-delete it and use **Add New → Project → Import** on the same repository instead;
-nothing outside Vercel depends on that project's identity.
-
-Framework detection needs no help: it is a stock Next.js app at the repository
-root, and `npm run build` passes on this commit.
+The build is green and the app is live; it cannot reach a database or sign you
+in until these are done.
 
 ### 1. The database password → `DATABASE_URL`
 
@@ -89,9 +72,9 @@ Without this the magic link in your inbox will send you to `localhost:3000`.
 
 Supabase dashboard → **Authentication → URL Configuration**:
 
-- **Site URL** — your Vercel production URL
+- **Site URL** — `https://deliberate-practice.vercel.app`
 - **Redirect URLs** — add both:
-  - `https://<your-vercel-domain>/auth/callback`
+  - `https://deliberate-practice.vercel.app/auth/callback`
   - `http://localhost:3000/auth/callback` (for local development)
 
 ### 4. Sign in, and lock the door behind you
@@ -152,7 +135,12 @@ Never edit an applied migration; add a new one.
 
 ## Moving production to `main`
 
-Production is set to build from `claude/build-this-3pl69t`, the branch this was
-developed on, because that is the repository's only branch — it was empty before
-this work. If you merge it to a `main` branch, change Vercel → Settings → Git →
-Production Branch to match.
+`main` now exists, holding the implementation plan this was built against, and
+pull request #1 proposes merging the implementation into it. Vercel's production
+branch is still `claude/build-this-3pl69t`, so after you merge:
+
+- Vercel → Settings → Git → **Production Branch** → `main`
+- GitHub → Settings → General → **Default branch** → `main`
+
+Until then `main` is a one-commit branch and the working app is what is deployed
+from the feature branch.
