@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { cn } from "@/lib/cn";
-import { Input, NumberInput, Select, Textarea, Label } from "./field";
+import { Input, NumberInput, Select, Textarea } from "./field";
 
 type SaveFn = (value: string | null) => Promise<unknown>;
 type Status = "idle" | "dirty" | "saving" | "saved" | "error";
@@ -79,17 +79,18 @@ function Wrap({
   label?: string; status: Status; children: React.ReactNode;
   className?: string; hint?: string;
 }) {
+  // The status line is always present, labelled or not — a field that saves
+  // silently is a field you cannot trust. The control sits inside the <label>,
+  // so the association needs no id.
   return (
-    <div className={cn("min-w-0", className)}>
-      {label && (
-        <div className="flex items-baseline justify-between gap-2 mb-1">
-          <Label className="mb-0">{label}</Label>
-          <SaveMark status={status} />
-        </div>
-      )}
+    <label className={cn("block min-w-0", className)}>
+      <span className="flex items-baseline justify-between gap-2 mb-1 min-h-[15px]">
+        <span className="label">{label ?? ""}</span>
+        <SaveMark status={status} />
+      </span>
       {children}
-      {hint && <p className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>}
-    </div>
+      {hint && <span className="block mt-1 text-11 text-[var(--text-tertiary)]">{hint}</span>}
+    </label>
   );
 }
 

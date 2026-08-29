@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Card, Divider, EmptyState } from "@/components/ui/surface";
 import { AutosaveTextarea } from "@/components/ui/autosave";
 import { Button } from "@/components/ui/button";
-import { Checkbox, Input, NumberInput, Select } from "@/components/ui/field";
+import { Checkbox, Field, Input, NumberInput, Select } from "@/components/ui/field";
 import { Pill } from "@/components/ui/pill";
 import { useToast } from "@/components/ui/toast";
 import { addEvent, deleteEvent, updateEvent, upsertEnvironment } from "@/app/actions/day";
@@ -82,30 +82,27 @@ export function Environment({
         )}
 
         <div className="flex flex-wrap items-end gap-2 mt-3">
-          <div className="flex-1 min-w-[150px]">
-            <div className="label mb-1">Release</div>
+          <Field label="Release" className="flex-1 min-w-[150px]">
             <Input
               value={draft.name} className="h-8 py-0" placeholder="US CPI"
               onChange={(e) => setDraft({ ...draft, name: e.target.value })}
               onKeyDown={(e) => { if (e.key === "Enter" && draft.name && draft.time) addRelease(); }}
             />
-          </div>
-          <div className="w-24">
-            <div className="label mb-1">Time</div>
+          </Field>
+          <Field label="Release time" className="w-24">
             <Input
               type="time" value={draft.time} className="h-8 py-0 mono"
               onChange={(e) => setDraft({ ...draft, time: e.target.value })}
             />
-          </div>
-          <div className="w-24">
-            <div className="label mb-1">Importance</div>
+          </Field>
+          <Field label="Importance" className="w-24">
             <Select
               value={draft.importance} className="h-8 py-0"
               onChange={(e) => setDraft({ ...draft, importance: e.target.value })}
             >
               <option value="1">1 low</option><option value="2">2</option><option value="3">3 high</option>
             </Select>
-          </div>
+          </Field>
           <Button size="sm" onClick={addRelease} disabled={!draft.name || !draft.time}>Add</Button>
         </div>
 

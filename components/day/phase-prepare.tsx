@@ -172,6 +172,9 @@ function InstrumentPrepCard({
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
+          // Adjacent spans separated by a flex gap produce a run-together
+          // accessible name ("S&P 5000 levels"), so name the button explicitly.
+          aria-label={`${symbol}, ${name}, ${levels.length} levels`}
           className="flex items-baseline gap-2 text-left min-w-0"
         >
           <span aria-hidden className="text-[var(--text-tertiary)] text-12">{open ? "▾" : "▸"}</span>

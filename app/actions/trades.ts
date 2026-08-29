@@ -222,22 +222,13 @@ export async function detachMedia(mediaId: string) {
 
 /* ── CSV import ────────────────────────────────────────────────────────── */
 
-export const importRow = z.object({
-  externalId: z.string().max(120).nullish(),
-  symbol: z.string().min(1).max(20),
-  side: z.enum(["buy", "sell"]),
-  price: S.requiredNumeric,
-  quantity: S.requiredNumeric,
-  executedAt: z.string().min(1),
-});
-
 /**
  * Fills, grouped into trades by symbol and by the position going flat. Written
  * against a neutral row shape so a Rithmic or broker-specific mapping is a new
  * parser in lib/import/, not a rewrite of this.
  */
 export async function importExecutions(dayId: string, date: string, rows: unknown) {
-  const res = await action(z.object({ rows: z.array(importRow).max(2000) }), { rows },
+  const res = await action(z.object({ rows: z.array(S.importRow).max(2000) }), { rows },
     async (db, v, userId) => {
       const instruments = await db.execute<{ id: string; symbol: string }>(
         sql`select id, symbol from instruments where user_id is null or user_id = ${userId}`,

@@ -7,9 +7,16 @@ export const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD")
 const nullableText = z.string().trim().max(20000).nullish().transform((v) => (v ? v : null));
 const nullableShort = z.string().trim().max(400).nullish().transform((v) => (v ? v : null));
 
-/** Numeric fields arrive from inputs as strings. Empty means "not set", not zero. */
+/**
+ * Numeric fields arrive from inputs as strings. Empty means "not set", not zero.
+ *
+ * `unknown().optional()` rather than a union including `z.undefined()`: Zod
+ * treats a transform over such a union as non-optional, so an absent key — a
+ * field the form simply did not render — fails the whole patch.
+ */
 export const numericish = z
-  .union([z.string(), z.number(), z.null(), z.undefined()])
+  .unknown()
+  .optional()
   .transform((v) => {
     if (v === null || v === undefined || v === "") return null;
     const n = Number(v);
@@ -261,6 +268,16 @@ export const reviewInput = z.object({
   summary: nullableText,
   themes: z.array(z.string().trim().min(1).max(80)).max(20).optional(),
   focusNextPeriod: nullableText,
+});
+
+/** One row of an imported broker CSV, after lib/import/csv.ts has normalised it. */
+export const importRow = z.object({
+  externalId: z.string().max(120).nullish(),
+  symbol: z.string().min(1).max(20),
+  side: z.enum(["buy", "sell"]),
+  price: requiredNumeric,
+  quantity: requiredNumeric,
+  executedAt: z.string().min(1),
 });
 
 export type QuickTradeInput = z.infer<typeof quickTradeInput>;

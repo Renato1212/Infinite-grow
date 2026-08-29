@@ -14,6 +14,10 @@ export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLab
   return <label className={cn("label block mb-1", className)} {...props} />;
 }
 
+/**
+ * The control lives inside the <label>, so it is associated with its text
+ * implicitly — no id plumbing, and screen readers and `getByLabel` both work.
+ */
 export function Field({
   label, hint, htmlFor, children, className,
 }: {
@@ -21,11 +25,11 @@ export function Field({
   children: React.ReactNode; className?: string;
 }) {
   return (
-    <div className={cn("min-w-0", className)}>
-      {label && <Label htmlFor={htmlFor}>{label}</Label>}
+    <label className={cn("block min-w-0", className)} htmlFor={htmlFor}>
+      {label && <span className="label block mb-1">{label}</span>}
       {children}
-      {hint && <p className="mt-1 text-11 text-[var(--text-tertiary)]">{hint}</p>}
-    </div>
+      {hint && <span className="block mt-1 text-11 text-[var(--text-tertiary)]">{hint}</span>}
+    </label>
   );
 }
 

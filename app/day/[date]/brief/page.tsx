@@ -172,19 +172,19 @@ export default async function BriefPage({ params }: { params: Promise<{ date: st
                     <dl className="mt-1.5 space-y-1 text-12">
                       {h.triggerConditions && (
                         <div className="flex gap-2">
-                          <dt className="label w-[86px] shrink-0 pt-0.5">Trigger</dt>
+                          <dt className="label w-[104px] shrink-0 pt-0.5">Trigger</dt>
                           <dd className="text-[var(--text-secondary)]">{h.triggerConditions}</dd>
                         </div>
                       )}
                       {h.invalidation && (
                         <div className="flex gap-2">
-                          <dt className="label w-[86px] shrink-0 pt-0.5">Invalidation</dt>
+                          <dt className="label w-[104px] shrink-0 pt-0.5">Invalidation</dt>
                           <dd className="text-[var(--text-secondary)]">{h.invalidation}</dd>
                         </div>
                       )}
                       {h.plannedResponse && (
                         <div className="flex gap-2">
-                          <dt className="label w-[86px] shrink-0 pt-0.5">Response</dt>
+                          <dt className="label w-[104px] shrink-0 pt-0.5">Response</dt>
                           <dd className="text-[var(--text-secondary)]">{h.plannedResponse}</dd>
                         </div>
                       )}

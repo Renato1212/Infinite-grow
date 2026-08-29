@@ -199,6 +199,11 @@ export function PhaseShell({
   children: React.ReactNode; actions?: React.ReactNode;
 }) {
   const missing = checks.filter((c) => !c.done);
+  // Per-trade checks all carry the same label; say it once, with a count.
+  const missingLabels = [...new Set(missing.map((c) => c.label.toLowerCase()))];
+  const missingText = missing.length > missingLabels.length
+    ? `${missing.length} left: ${missingLabels.join(" · ")}`
+    : missingLabels.join(" · ");
   return (
     <section id={`phase-${id}`} className="scroll-mt-24 min-w-0">
       <header className="flex flex-wrap items-start justify-between gap-3 mb-4">
@@ -212,7 +217,7 @@ export function PhaseShell({
             <p className="text-12 text-[var(--text-secondary)] mt-0.5">{description}</p>
             {missing.length > 0 && (
               <p className="text-11 text-[var(--text-tertiary)] mt-1">
-                Still to do: {missing.map((c) => c.label.toLowerCase()).join(" · ")}
+                Still to do: {missingText}
               </p>
             )}
           </div>

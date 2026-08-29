@@ -1,10 +1,13 @@
 import { num } from "./pnl";
 
+// narrowSymbol keeps it "$1,234.00" rather than en-GB's default "US$1,234.00".
 const money = new Intl.NumberFormat("en-GB", {
-  style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2,
+  style: "currency", currency: "USD", currencyDisplay: "narrowSymbol",
+  minimumFractionDigits: 2, maximumFractionDigits: 2,
 });
 const moneyCompact = new Intl.NumberFormat("en-GB", {
-  style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0,
+  style: "currency", currency: "USD", currencyDisplay: "narrowSymbol",
+  minimumFractionDigits: 0, maximumFractionDigits: 0,
 });
 
 /** P&L with an explicit sign, so meaning is never carried by colour alone. */

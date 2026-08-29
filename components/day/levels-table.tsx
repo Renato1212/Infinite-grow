@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button, TextButton } from "@/components/ui/button";
-import { NumberInput, Select, Input } from "@/components/ui/field";
+import { Field, NumberInput, Select, Input } from "@/components/ui/field";
 import { Pill } from "@/components/ui/pill";
 import { useToast } from "@/components/ui/toast";
 import { addLevel, deleteLevel, setLevelInteraction, updateLevel } from "@/app/actions/day";
@@ -144,8 +144,7 @@ export function LevelsTable({
 
       {!readOnly && (
         <div className="flex flex-wrap items-end gap-2 mt-2.5">
-          <div className="min-w-[140px]">
-            <div className="label mb-1">Type</div>
+          <Field label="Level type" className="min-w-[140px]">
             <Select
               value={draft.levelTypeId} placeholder="Choose"
               className="h-8 py-0"
@@ -153,32 +152,29 @@ export function LevelsTable({
             >
               {levelTypes.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
             </Select>
-          </div>
-          <div className="w-28">
-            <div className="label mb-1">Price</div>
+          </Field>
+          <Field label="Level price" className="w-32">
             <NumberInput
               value={draft.price} className="h-8 py-0"
               onChange={(e) => setDraft({ ...draft, price: e.target.value })}
               onKeyDown={(e) => { if (e.key === "Enter" && draft.levelTypeId && draft.price) add(); }}
             />
-          </div>
-          <div className="w-20">
-            <div className="label mb-1">Strength</div>
+          </Field>
+          <Field label="Strength" className="w-20">
             <Select
               value={draft.strength} className="h-8 py-0"
               onChange={(e) => setDraft({ ...draft, strength: e.target.value })}
             >
               <option value="1">1</option><option value="2">2</option><option value="3">3</option>
             </Select>
-          </div>
-          <div className="flex-1 min-w-[140px]">
-            <div className="label mb-1">Note</div>
+          </Field>
+          <Field label="Level note" className="flex-1 min-w-[140px]">
             <Input
               value={draft.note} className="h-8 py-0"
               onChange={(e) => setDraft({ ...draft, note: e.target.value })}
               onKeyDown={(e) => { if (e.key === "Enter" && draft.levelTypeId && draft.price) add(); }}
             />
-          </div>
+          </Field>
           <Button size="sm" onClick={add} disabled={!draft.levelTypeId || !num(draft.price, NaN)}>
             Add level
           </Button>
