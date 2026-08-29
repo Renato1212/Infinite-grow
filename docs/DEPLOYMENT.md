@@ -28,7 +28,7 @@ production once and then delete those days.
 
 ---
 
-## Three things to finish
+## Finishing the setup
 
 The build is green and the app is live; it cannot reach a database or sign you
 in until these are done.
