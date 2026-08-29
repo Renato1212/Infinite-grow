@@ -1,0 +1,122 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-quiet: var(--accent-quiet);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --color-warn: var(--warn);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --text-11: var(--t-11);
+  --text-12: var(--t-12);
+  --text-13: var(--t-13);
+  --text-15: var(--t-15);
+  --text-17: var(--t-17);
+  --text-20: var(--t-20);
+  --text-24: var(--t-24);
+  --text-32: var(--t-32);
+
+  --radius-input: var(--r-input);
+  --radius-std: var(--r-std);
+  --radius-lg: var(--r-lg);
+
+  --ease-physical: var(--ease);
+}
+
+@layer base {
+  * { border-color: var(--line); }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--t-13);
+    line-height: 1.45;
+    letter-spacing: -0.003em;
+  }
+
+  h1, h2, h3, h4 { font-weight: 590; letter-spacing: -0.012em; line-height: 1.28; }
+
+  /* Numbers must align to the digit, everywhere they can change. */
+  .num, table td, table th, input[type="number"], time, [data-num] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  /* Never remove focus; only replace it where a ring reads better. */
+  :focus:not(:focus-visible) { outline: none; }
+
+  ::selection { background: var(--accent-quiet); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  .label {
+    font-size: var(--t-11);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 560;
+    color: var(--text-tertiary);
+  }
+  .hairline { border-top: 1px solid var(--line); }
+  .surface {
+    background: var(--bg-raised);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--line);
+  }
+  .elevated { box-shadow: var(--shadow-raised); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print: the brief ─────────────────────────────────────────────────────── */
+@page { size: A4; margin: 14mm 12mm; }
+@media print {
+  :root { --bg: #fff; --bg-raised: #fff; --text: #000; --text-secondary: #333;
+          --line: rgb(0 0 0 / 0.18); }
+  html, body { background: #fff !important; color: #000 !important; font-size: 10.5pt; }
+  [data-print-hide], nav, header[data-app-header] { display: none !important; }
+  .surface { border: none; }
+  .print-block { break-inside: avoid; page-break-inside: avoid; }
+  a[href]::after { content: ""; }
+}
