@@ -1,5 +1,12 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { classifyDbError, overall, supabaseChecks, visibleTo, type Check } from "./health";
+import {
+  checkConnectionShape,
+  classifyDbError,
+  overall,
+  supabaseChecks,
+  visibleTo,
+  type Check,
+} from "./health";
 
 const check = (over: Partial<Check> = {}): Check => ({
   name: "x",
@@ -116,5 +123,70 @@ describe("what an anonymous caller may see", () => {
   it("shows a broken install to anyone, since that is when it is needed", () => {
     // Nothing can be signed in yet, so there is nothing behind it to protect.
     expect(visibleTo(broken, false)).toEqual(broken);
+  });
+});
+
+
+describe("connection string shape", () => {
+  const REF = "zggckkxrnaysruvcmqng";
+  const POOLER = `aws-0-eu-west-3.pooler.supabase.com:6543`;
+  const DIRECT = `db.${REF}.supabase.co:5432`;
+
+  const only = (url: string, serverless = true) => checkConnectionShape(url, serverless);
+
+  it("accepts the string Supabase hands you for the pooler", () => {
+    expect(only(`postgresql://postgres.${REF}:s3cret@${POOLER}/postgres`)).toEqual([]);
+  });
+
+  it("accepts the direct string off a serverless platform", () => {
+    expect(only(`postgresql://postgres:s3cret@${DIRECT}/postgres`, false)).toEqual([]);
+  });
+
+  it("catches a bare postgres username against the pooler", () => {
+    // The failure this actually produced was "password authentication failed",
+    // which sends you looking at the password instead of the username.
+    const [c] = only(`postgresql://postgres:s3cret@${POOLER}/postgres`);
+    expect(c.status).toBe("fail");
+    expect(c.detail).toMatch(/postgres\.<project-ref>/);
+  });
+
+  it("catches a pooler username against the direct host", () => {
+    const [c] = only(`postgresql://postgres.${REF}:s3cret@${DIRECT}/postgres`);
+    expect(c.status).toBe("fail");
+    expect(c.detail).toMatch(/plain "postgres"/);
+  });
+
+  it("catches the placeholder left in", () => {
+    const [c] = only(`postgresql://postgres.${REF}:%5BYOUR-PASSWORD%5D@${POOLER}/postgres`);
+    expect(c.status).toBe("fail");
+    expect(c.detail).toMatch(/placeholder/);
+  });
+
+  it("catches a missing password", () => {
+    const [c] = only(`postgresql://postgres.${REF}@${POOLER}/postgres`);
+    expect(c.status).toBe("fail");
+    expect(c.detail).toMatch(/no password/);
+  });
+
+  it("explains an unparseable URL as the encoding problem it usually is", () => {
+    const [c] = only("not a url");
+    expect(c.status).toBe("fail");
+    expect(c.fix).toMatch(/%23/);
+  });
+
+  it("warns that the direct host is IPv6 when running serverless", () => {
+    const [c] = only(`postgresql://postgres:s3cret@${DIRECT}/postgres`, true);
+    expect(c.status).toBe("warn");
+    expect(c.detail).toMatch(/IPv6/);
+  });
+
+  it("does not mistake another host for Supabase's", () => {
+    expect(only("postgresql://someone:pw@db.example.com:5432/app")).toEqual([]);
+  });
+});
+
+describe("classifyDbError, pooler cases", () => {
+  it("blames the username when the pooler rejects the tenant", () => {
+    expect(classifyDbError(new Error("Tenant or user not found"))).toMatch(/username/);
   });
 });

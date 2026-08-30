@@ -72,6 +72,10 @@ export function classifyDbError(err: unknown): string {
 
   // postgres-js reports a plaintext rejection as a protocol error rather than
   // a code, and it is the single most likely failure against a hosted server.
+  // Supavisor answers an unknown tenant with this rather than a Postgres code,
+  // and it means the username is wrong, not the password.
+  if (/Tenant or user not found/i.test(raw))
+    return "the pooler did not recognise the username — it must be postgres.<project-ref>";
   if (/SSL|TLS|self.signed|certificate/i.test(raw)) return "the TLS handshake failed";
   if (/terminated|CONNECTION_CLOSED/i.test(raw)) return "the server closed the connection";
   return "the connection failed";
@@ -102,6 +106,91 @@ async function tryQuery<T>(sql: postgres.Sql, run: () => Promise<T>): Promise<T 
   }
 }
 
+/**
+ * What can be judged from the connection string alone, before dialling.
+ *
+ * A pooler host with a bare `postgres` username is the single most common way
+ * this goes wrong, and it costs a deploy cycle to discover from the server's
+ * reply. The rules come from Supabase's own connection docs: the shared pooler
+ * authenticates as `postgres.<project-ref>`, the direct host as `postgres`.
+ *
+ * Exported for its own test; `serverless` is passed rather than read so the
+ * test does not have to fake a platform.
+ */
+export function checkConnectionShape(url: string, serverless: boolean): Check[] {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return [
+      {
+        name: "Database",
+        status: "fail",
+        detail: "DATABASE_URL is not a valid URL.",
+        // Far and away the usual cause, and invisible when you look at it.
+        fix: "A reserved character in the password will do this. Percent-encode them: # is %23, @ is %40, / is %2F, ? is %3F, % is %25, & is %26, : is %3A, a space is %20.",
+      },
+    ];
+  }
+
+  const host = parsed.hostname;
+  const user = decodeURIComponent(parsed.username);
+  const password = parsed.password;
+  const pooler = host.endsWith("pooler.supabase.com");
+  const direct = /^db\.[a-z0-9]+\.supabase\.co$/.test(host);
+
+  if (!password) {
+    return [
+      { name: "Database", status: "fail", detail: "DATABASE_URL has no password in it.", fix: "Supabase → Project Settings → Database → Connection string." },
+    ];
+  }
+  if (/%5B|%5D|\[|\]/.test(password) || /YOUR-PASSWORD/i.test(decodeURIComponent(password))) {
+    return [
+      {
+        name: "Database",
+        status: "fail",
+        detail: "DATABASE_URL still contains the [YOUR-PASSWORD] placeholder.",
+        fix: "Replace it with the real password from Supabase → Project Settings → Database.",
+      },
+    ];
+  }
+  if (pooler && !user.includes(".")) {
+    return [
+      {
+        name: "Database",
+        status: "fail",
+        detail: `The pooler host needs the username postgres.<project-ref>, but this connects as "${user}".`,
+        fix: "Copy the string from Supabase → Connect → Transaction pooler, which already has it right.",
+      },
+    ];
+  }
+  if (direct && user.includes(".")) {
+    return [
+      {
+        name: "Database",
+        status: "fail",
+        detail: `The direct host authenticates as plain "postgres", but this connects as "${user}".`,
+        fix: "Either drop the .<project-ref> from the username, or use the pooler host it belongs to.",
+      },
+    ];
+  }
+
+  // Not fatal, but it will never work from a serverless platform, and the
+  // failure it produces looks like a network fault rather than a wrong choice.
+  if (direct && serverless) {
+    return [
+      {
+        name: "Database",
+        status: "warn",
+        detail: "This is the direct connection, which Supabase serves over IPv6; serverless platforms are commonly IPv4-only.",
+        fix: "Use the transaction pooler string (aws-…pooler.supabase.com:6543) instead.",
+      },
+    ];
+  }
+
+  return [];
+}
+
 async function databaseChecks(): Promise<Check[]> {
   if (!process.env.DATABASE_URL) {
     return [
@@ -114,9 +203,13 @@ async function databaseChecks(): Promise<Check[]> {
     ];
   }
 
+  const shapeIssues = checkConnectionShape(process.env.DATABASE_URL, Boolean(process.env.VERCEL));
+  // A wrong shape names the mistake; the server's reply would only say "rejected".
+  if (shapeIssues.some((c) => c.status === "fail")) return shapeIssues;
+
   try {
     return await withConnection(async (sql) => {
-      const checks: Check[] = [];
+      const checks: Check[] = [...shapeIssues];
 
       const [shape] = await sql<
         { tables: number; policies: number; unprotected: number; views: number }[]
