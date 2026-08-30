@@ -85,17 +85,32 @@ describe("supabase checks", () => {
 
   it("warns while anyone can still create an account", async () => {
     withSupabaseEnv();
-    vi.stubGlobal("fetch", async () => Response.json({ disable_signup: false }));
+    vi.stubGlobal("fetch", async () =>
+      Response.json({ disable_signup: false, mailer_autoconfirm: true }),
+    );
     const checks = await supabaseChecks();
     expect(checks[0].status).toBe("ok");
     expect(checks[1]).toMatchObject({ name: "Sign-ups", status: "warn" });
   });
 
-  it("passes once sign-ups are closed", async () => {
+  it("passes once sign-ups are closed and confirmation is off", async () => {
     withSupabaseEnv();
-    vi.stubGlobal("fetch", async () => Response.json({ disable_signup: true }));
+    vi.stubGlobal("fetch", async () =>
+      Response.json({ disable_signup: true, mailer_autoconfirm: true }),
+    );
     const checks = await supabaseChecks();
     expect(checks.every((c) => c.status === "ok")).toBe(true);
+  });
+
+  it("warns that account creation needs an email while confirmation is on", async () => {
+    // Password sign-in has no redirect step, but confirmation reintroduces a
+    // mail round trip on the very first sign-up — the only time it bites.
+    withSupabaseEnv();
+    vi.stubGlobal("fetch", async () =>
+      Response.json({ disable_signup: false, mailer_autoconfirm: false }),
+    );
+    const checks = await supabaseChecks();
+    expect(checks.find((c) => c.name === "Email confirmation")).toMatchObject({ status: "warn" });
   });
 
   it("fails rather than throwing when the project is unreachable", async () => {

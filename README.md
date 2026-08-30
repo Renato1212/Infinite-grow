@@ -30,8 +30,8 @@ npm run dev
 ```
 
 **Against Supabase.** Set `DATABASE_URL` to the project's session-pooler URL, plus
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for auth (email magic
-link) and Storage. Create a private Storage bucket named `media` for trade recordings.
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for auth (email and
+password) and Storage. Create a private Storage bucket named `media` for trade recordings.
 
 **Against a bare Postgres.** Migration `0000_auth_shim.sql` creates just enough of
 `auth.users`, `auth.uid()` and the `authenticated` role for everything else to behave

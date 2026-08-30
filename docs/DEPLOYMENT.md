@@ -94,29 +94,25 @@ your local `.env.local`, never in the repository.
 
 Redeploy after adding them.
 
-### 3. Auth redirect URLs
+### 3. Create your account
 
-Without this the magic link in your inbox will send you to `localhost:3000`.
-This is the one step nothing can verify for you — the allowlist is not readable
-back through any API — so the health check flags it as yours to confirm. The
-test is simply whether the link lands you on the deployed host.
+Open the app, enter your email and a password, and choose **Create the first
+account**. Sign-in is email and password — there is no link to wait for and no
+redirect URL to allowlist.
 
-Supabase dashboard → **Authentication → URL Configuration**:
+If Supabase still has **Confirm email** switched on, creating the account sends
+you one message that you have to click before signing in. To skip that:
+**Authentication → Sign In / Providers → Email → Confirm email → off**. The
+health check reports which of the two you are in.
 
-- **Site URL** — `https://deliberate-practice.vercel.app`
-- **Redirect URLs** — add both:
-  - `https://deliberate-practice.vercel.app/auth/callback`
-  - `http://localhost:3000/auth/callback` (for local development)
+### 4. Lock the door behind you
 
-### 4. Sign in, and lock the door behind you
-
-Open the deployed app, enter your email, click the link. That creates your
-account.
-
-Then, because this is a private journal and Supabase allows public sign-ups by
+Because this is a private journal and Supabase allows public sign-ups by
 default: **Authentication → Sign In / Providers → Email → disable "Allow new
-users to sign up"**. Your existing account keeps working; nobody else can make
-one.
+users to sign up"**. Your account keeps working; nobody else can make one.
+
+Do this *after* your account exists, or you will lock yourself out of an empty
+app.
 
 ---
 
@@ -128,9 +124,18 @@ curl https://deliberate-practice.vercel.app/api/health   # what Vercel holds
 ```
 
 Both report the same checks: the Supabase URL and anon key agree and the project
-answers; whether sign-ups are still open; the database is reachable and over TLS;
+answers; whether sign-ups are still open; whether email confirmation will stand
+between you and your first sign-in; the database is reachable and over TLS;
 every migration is applied; RLS is forced on all 35 tables with four policies
 each; the shared catalogue is populated; the private `media` bucket exists.
+
+Before it dials the database at all, it checks the shape of `DATABASE_URL`:
+the shared pooler authenticates as `postgres.<project-ref>` and the direct host
+as plain `postgres`, so the wrong one is named outright rather than surfacing as
+"password authentication failed". It also catches an unreplaced
+`[YOUR-PASSWORD]`, a missing password, and a URL that will not parse — which is
+what an unencoded `#` or `@` in a password produces, and which looks perfectly
+fine to the eye.
 
 Neither ever prints a password, a key, or the driver's own error text — a
 `postgres-js` failure carries the host and role in its message, so causes are

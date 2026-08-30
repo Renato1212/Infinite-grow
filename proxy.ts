@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 /**
- * Refreshes the Supabase session cookie on every navigation, so a magic-link
+ * Refreshes the Supabase session cookie on every navigation, so a signed-in
  * session survives longer than its access token. Skipped entirely when Supabase
  * is not configured (local development against a bare Postgres).
  *

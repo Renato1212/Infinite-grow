@@ -375,7 +375,10 @@ export async function supabaseChecks(): Promise<Check[]> {
         },
       ];
     }
-    const settings = (await res.json()) as { disable_signup?: boolean };
+    const settings = (await res.json()) as {
+      disable_signup?: boolean;
+      mailer_autoconfirm?: boolean;
+    };
     const checks: Check[] = [
       {
         name: "Authentication",
@@ -395,6 +398,25 @@ export async function supabaseChecks(): Promise<Check[]> {
             fix: "Sign in first, then Supabase → Authentication → Sign In / Providers → Email → disable “Allow new users to sign up”.",
           },
     );
+    // Sign-in is email and password, so no link is involved and no redirect
+    // allowlist is needed. Confirmation on sign-up is the one exception, and
+    // unlike the allowlist itself this is readable, so it is checked rather
+    // than left as an instruction.
+    checks.push(
+      settings.mailer_autoconfirm
+        ? {
+            name: "Email confirmation",
+            status: "ok",
+            detail: "Off — creating an account signs you straight in.",
+          }
+        : {
+            name: "Email confirmation",
+            status: "warn",
+            detail:
+              "On, so creating an account needs a link from your inbox before you can sign in.",
+            fix: "Either confirm that one email, or turn off Authentication → Sign In / Providers → Email → Confirm email.",
+          },
+    );
     return checks;
   } catch {
     return [
@@ -406,20 +428,6 @@ export async function supabaseChecks(): Promise<Check[]> {
       },
     ];
   }
-}
-
-/**
- * The redirect allowlist is not readable through any API, so this states the
- * one-line manual test rather than pretending to have checked it.
- */
-function redirectCheck(): Check {
-  return {
-    name: "Auth redirect URLs",
-    status: "warn",
-    manual: true,
-    detail: "Cannot be read back from Supabase, so this is the one step nothing can verify for you.",
-    fix: "Send yourself a sign-in link: if it opens this host and signs you in, it is right. If it drops you on localhost, add <this origin>/auth/callback under Authentication → URL Configuration.",
-  };
 }
 
 /**
@@ -438,6 +446,6 @@ export function visibleTo(health: Health, signedIn: boolean): Health | { status:
 
 export async function runHealth(): Promise<Health> {
   const [supabase, database] = await Promise.all([supabaseChecks(), databaseChecks()]);
-  const checks = [...supabase, ...database, redirectCheck()];
+  const checks = [...supabase, ...database];
   return { status: overall(checks), checks };
 }
