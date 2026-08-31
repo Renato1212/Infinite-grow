@@ -38,6 +38,12 @@ describe("classifyDbError", () => {
     expect(classifyDbError({ code: "3D000" })).toMatch(/database name/);
   });
 
+  it("names the circuit breaker rather than calling it a generic failure", () => {
+    const said = classifyDbError(new Error("circuit breaker open for operation: auth_error"));
+    expect(said).toMatch(/circuit breaker/);
+    expect(said).toMatch(/wait/);
+  });
+
   it("recognises a plaintext rejection, which has no code", () => {
     expect(classifyDbError(new Error("The server does not support SSL connections"))).toMatch(
       /TLS/,

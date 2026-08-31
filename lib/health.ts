@@ -76,6 +76,12 @@ export function classifyDbError(err: unknown): string {
   // and it means the username is wrong, not the password.
   if (/Tenant or user not found/i.test(raw))
     return "the pooler did not recognise the username — it must be postgres.<project-ref>";
+  // Repeated bad passwords trip Supavisor's breaker, which then rejects even a
+  // correct one for a few minutes. Worth naming: it makes a fix that already
+  // works look like it failed, and the obvious response is to change the
+  // password again, which starts the cycle over.
+  if (/circuit breaker|temporarily blocked|too many authentication failures/i.test(raw))
+    return "earlier failed attempts tripped the pooler's circuit breaker, which blocks all connections for a few minutes — wait, then retry before changing anything";
   if (/SSL|TLS|self.signed|certificate/i.test(raw)) return "the TLS handshake failed";
   if (/terminated|CONNECTION_CLOSED/i.test(raw)) return "the server closed the connection";
   return "the connection failed";
