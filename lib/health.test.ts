@@ -183,7 +183,26 @@ describe("connection string shape", () => {
     expect(c.detail).toMatch(/placeholder/);
   });
 
+  it("allows a local database with no password, as trust auth gives", () => {
+    // Caught by running it: the shape check failed a perfectly good local
+    // connection, which is how every contributor runs the app.
+    expect(only("postgresql://postgres@127.0.0.1:5433/journal", false)).toEqual([]);
+  });
+
+  it("names the variable the value actually came from", () => {
+    // Telling someone to edit DATABASE_URL when the value came from
+    // POSTGRES_URL sends them to a variable that is not set.
+    const [c] = checkConnectionShape(
+      `postgresql://postgres.${REF}:%5BYOUR-PASSWORD%5D@${POOLER}/postgres`,
+      true,
+      "POSTGRES_URL",
+    );
+    expect(c.detail).toMatch(/POSTGRES_URL/);
+    expect(c.detail).not.toMatch(/DATABASE_URL/);
+  });
+
   it("catches a missing password", () => {
+    // Remote, so an absent password is a real fault.
     const [c] = only(`postgresql://postgres.${REF}@${POOLER}/postgres`);
     expect(c.status).toBe("fail");
     expect(c.detail).toMatch(/no password/);

@@ -29,7 +29,9 @@ npm run db:seed                   # ~40 sessions of realistic data
 npm run dev
 ```
 
-**Against Supabase.** Set `DATABASE_URL` to the project's session-pooler URL, plus
+**Against Supabase.** Set `DATABASE_URL` to the project's session-pooler URL — or let
+Vercel's Supabase integration set `POSTGRES_URL` for you, which `lib/db/url.ts` reads
+just as happily — plus
 `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` for auth (email and
 password) and Storage. Create a private Storage bucket named `media` for trade recordings.
 

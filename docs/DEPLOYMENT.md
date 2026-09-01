@@ -45,41 +45,28 @@ which is the thing a check on your own machine cannot tell you. It names every
 problem and what to do about it. `npm run doctor` runs the same checks against
 your local `.env.local`, in a nicer format.
 
-### 1. The database password → `DATABASE_URL`
+### 1. The database connection
 
-The app talks to Postgres directly (Drizzle over postgres-js), because that is
-what makes the RLS-scoped transactions and the raw-SQL analytics possible. That
-needs the database password, which Supabase shows once at creation and never
-again through the API.
+**The easy way — no password, nothing to type.** In Vercel, open the project →
+**Integrations** → connect the **Supabase** project. It writes `POSTGRES_URL`
+(and `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_HOST` / …) into the
+project itself, with the right pooler host and the right password. The app reads
+those directly, so there is no string to assemble and none of the ways that goes
+wrong: an unreplaced `[YOUR-PASSWORD]`, a pooler host copied from an example, a
+password with a `#` in it that silently truncates the URL.
 
-Supabase dashboard → **Project Settings → Database → Connection string → URI**,
-using the **Session pooler** (port 5432). If you never saved the password, use
-**Reset database password** on the same page.
+`lib/db/url.ts` resolves, in order: `DATABASE_URL`, `POSTGRES_URL`,
+`POSTGRES_PRISMA_URL`, `POSTGRES_URL_NON_POOLING`, and finally the discrete
+`POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_HOST` parts, which it escapes
+itself. A hand-set `DATABASE_URL` always wins, and the non-pooling URL is last
+because it resolves over IPv6, which serverless platforms commonly cannot reach.
 
-For Vercel, use the **transaction pooler on port 6543** — it is built for many
-short-lived instances, and the app is already compatible (`prepare: false`, and
-every query runs inside one transaction, so nothing depends on session state):
-
-```
-DATABASE_URL=postgresql://postgres.zggckkxrnaysruvcmqng:YOUR-PASSWORD@aws-N-eu-west-3.pooler.supabase.com:6543/postgres
-```
-
-**Copy the host from the dashboard rather than from the line above.** The `aws-N`
-prefix is assigned per project — it is not always `aws-0` — and a host taken from
-an example instead of from **Connect → Transaction pooler** fails with
-`tenant/user … not found`, which reads like a username problem and is not one.
-
-Use port **5432** (session pooler) when running migrations or the seed from your
-own machine; DDL is happier there.
-
-Two things that otherwise cost an afternoon:
-
-- If you set the password yourself, avoid `@ : / ? # [ ] %`. They are
-  URL-reserved and break the connection string unless percent-encoded. Letting
-  Supabase generate one sidesteps it.
-- TLS is handled for you. postgres-js defaults to no TLS and Supabase refuses a
-  plaintext connection, so `lib/db/ssl.ts` requires it for any non-local host.
-  An explicit `?sslmode=` in the URL still wins, in either direction.
+**By hand, if you prefer.** Supabase dashboard → **Connect** → **Transaction
+pooler**, and copy that string — including its host, whose `aws-N` prefix is
+assigned per project. Replace `[YOUR-PASSWORD]`, brackets and all, with the
+password from **Project Settings → Database** (reset it there if you no longer
+have it). Percent-encode `@ : / ? # % &` and spaces, or choose a password of
+letters and digits only.
 
 ### 2. The rest of the environment variables
 
@@ -87,7 +74,7 @@ Vercel → the project → **Settings → Environment Variables**. Add all four 
 **Production, Preview and Development**:
 
 ```
-DATABASE_URL                    (from step 1)
+DATABASE_URL                    (only if you did step 1 by hand)
 NEXT_PUBLIC_SUPABASE_URL        https://zggckkxrnaysruvcmqng.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpnZ2Nra3hybmF5c3J1dmNtcW5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5OTIwMDksImV4cCI6MjEwMzU2ODAwOX0.bWIivkhCNlXLV4bARwEX5MwWiZqA74pNIY2HxlUpGKQ
 ```

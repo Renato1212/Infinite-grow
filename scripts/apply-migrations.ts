@@ -6,9 +6,10 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import postgres from "postgres";
 import { sslFor } from "../lib/db/ssl";
+import { resolveDatabaseUrl } from "../lib/db/url";
 import "dotenv/config";
 
-const url = process.env.DATABASE_URL;
+const url = resolveDatabaseUrl()?.url;
 if (!url) throw new Error("DATABASE_URL is not set. Copy .env.example to .env.local.");
 
 const sql = postgres(url, { max: 1, ssl: sslFor(url), onnotice: () => {} });

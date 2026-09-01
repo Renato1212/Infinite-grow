@@ -13,7 +13,8 @@
  * raw error carries the host and role along with it.
  */
 import postgres from "postgres";
-import { sslFor } from "./db/ssl";
+import { isLocalHost, sslFor } from "./db/ssl";
+import { CONNECTION_VARIABLES, resolveDatabaseUrl } from "./db/url";
 
 export type Status = "ok" | "warn" | "fail";
 
@@ -58,12 +59,12 @@ export function classifyDbError(err: unknown): string {
   const raw = err instanceof Error ? err.message : String(err);
 
   const byCode: Record<string, string> = {
-    "28P01": "the password in DATABASE_URL was rejected",
-    "28000": "the role in DATABASE_URL is not allowed to connect",
+    "28P01": "the password in the connection string was rejected",
+    "28000": "the role in the connection string is not allowed to connect",
     "3D000": "that database name does not exist on the server",
-    "42501": "the role in DATABASE_URL lacks permission",
-    ENOTFOUND: "the host in DATABASE_URL does not resolve",
-    EAI_AGAIN: "the host in DATABASE_URL could not be resolved (DNS)",
+    "42501": "the role in the connection string lacks permission",
+    ENOTFOUND: "the host in the connection string does not resolve",
+    EAI_AGAIN: "the host in the connection string could not be resolved (DNS)",
     ECONNREFUSED: "nothing is listening on that host and port",
     ETIMEDOUT: "the connection timed out",
     CONNECT_TIMEOUT: "the connection timed out",
@@ -92,7 +93,7 @@ export function classifyDbError(err: unknown): string {
 }
 
 async function withConnection<T>(fn: (sql: postgres.Sql) => Promise<T>): Promise<T> {
-  const url = process.env.DATABASE_URL!;
+  const url = resolveDatabaseUrl()!.url;
   const sql = postgres(url, {
     max: 1,
     prepare: false,
@@ -127,7 +128,12 @@ async function tryQuery<T>(sql: postgres.Sql, run: () => Promise<T>): Promise<T 
  * Exported for its own test; `serverless` is passed rather than read so the
  * test does not have to fake a platform.
  */
-export function checkConnectionShape(url: string, serverless: boolean): Check[] {
+export function checkConnectionShape(
+  url: string,
+  serverless: boolean,
+  /** The variable it came from, so the advice names the one you would edit. */
+  source = "DATABASE_URL",
+): Check[] {
   let parsed: URL;
   try {
     parsed = new URL(url);
@@ -136,7 +142,7 @@ export function checkConnectionShape(url: string, serverless: boolean): Check[] 
       {
         name: "Database",
         status: "fail",
-        detail: "DATABASE_URL is not a valid URL.",
+        detail: `${source} is not a valid URL.`,
         // Far and away the usual cause, and invisible when you look at it.
         fix: "A reserved character in the password will do this. Percent-encode them: # is %23, @ is %40, / is %2F, ? is %3F, % is %25, & is %26, : is %3A, a space is %20.",
       },
@@ -149,9 +155,16 @@ export function checkConnectionShape(url: string, serverless: boolean): Check[] 
   const pooler = host.endsWith("pooler.supabase.com");
   const direct = /^db\.[a-z0-9]+\.supabase\.co$/.test(host);
 
-  if (!password) {
+  // A local database under trust authentication legitimately has no password;
+  // only a remote host makes its absence a fault.
+  if (!password && !isLocalHost(host)) {
     return [
-      { name: "Database", status: "fail", detail: "DATABASE_URL has no password in it.", fix: "Supabase → Project Settings → Database → Connection string." },
+      {
+        name: "Database",
+        status: "fail",
+        detail: `${source} has no password in it.`,
+        fix: "Supabase → Project Settings → Database → Connection string.",
+      },
     ];
   }
   if (/%5B|%5D|\[|\]/.test(password) || /YOUR-PASSWORD/i.test(decodeURIComponent(password))) {
@@ -159,7 +172,7 @@ export function checkConnectionShape(url: string, serverless: boolean): Check[] 
       {
         name: "Database",
         status: "fail",
-        detail: "DATABASE_URL still contains the [YOUR-PASSWORD] placeholder.",
+        detail: `${source} still contains the [YOUR-PASSWORD] placeholder.`,
         fix: "Replace it with the real password from Supabase → Project Settings → Database.",
       },
     ];
@@ -202,18 +215,22 @@ export function checkConnectionShape(url: string, serverless: boolean): Check[] 
 }
 
 async function databaseChecks(): Promise<Check[]> {
-  if (!process.env.DATABASE_URL) {
+  const resolved = resolveDatabaseUrl();
+  if (!resolved) {
     return [
       {
         name: "Database",
         status: "fail",
-        detail: "DATABASE_URL is not set, so there is nothing to read or write.",
-        fix: "Vercel → Settings → Environment Variables → add DATABASE_URL, then redeploy.",
+        detail: `No connection string is set — none of ${CONNECTION_VARIABLES.join(", ")}.`,
+        // The integration is the easier of the two, because it fills in the
+        // host and password itself; assembling the string by hand is what
+        // every failure here has come from.
+        fix: "Easiest: Vercel → the project → Integrations → connect the Supabase project, which sets POSTGRES_URL for you. Otherwise add DATABASE_URL by hand. Either way, redeploy afterwards.",
       },
     ];
   }
 
-  const shapeIssues = checkConnectionShape(process.env.DATABASE_URL, Boolean(process.env.VERCEL));
+  const shapeIssues = checkConnectionShape(resolved.url, Boolean(process.env.VERCEL), resolved.source);
   // A wrong shape names the mistake; the server's reply would only say "rejected".
   if (shapeIssues.some((c) => c.status === "fail")) return shapeIssues;
 
@@ -238,9 +255,11 @@ async function databaseChecks(): Promise<Check[]> {
       checks.push({
         name: "Database",
         status: "ok",
-        detail: sslFor(process.env.DATABASE_URL!)
-          ? "Reachable over TLS."
-          : "Reachable, without TLS — expected only for a local database.",
+        detail: `${
+          sslFor(resolved.url)
+            ? "Reachable over TLS"
+            : "Reachable, without TLS — expected only for a local database"
+        }, using ${resolved.source}.`,
       });
 
       if (shape.tables === 0) {

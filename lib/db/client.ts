@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import postgres from "postgres";
 import * as schema from "./schema";
 import { sslFor } from "./ssl";
+import { resolveDatabaseUrl } from "./url";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -12,10 +13,11 @@ declare global {
 }
 
 function connection() {
-  const url = process.env.DATABASE_URL;
-  if (!url) {
+  const resolved = resolveDatabaseUrl();
+  if (!resolved) {
     throw new Error("DATABASE_URL is not set");
   }
+  const { url } = resolved;
   global.__pg ??= postgres(url, {
     max: 10,
     prepare: false, // pgbouncer / Supabase poolers

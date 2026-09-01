@@ -14,6 +14,7 @@ import { join } from "node:path";
 import postgres from "postgres";
 import { sslFor } from "../lib/db/ssl";
 import { classifyDbError, overall, runHealth, type Check } from "../lib/health";
+import { resolveDatabaseUrl } from "../lib/db/url";
 import "dotenv/config";
 
 const BOLD = "\x1b[1m";
@@ -34,19 +35,19 @@ function line(check: Check): string {
 
 /** The host being checked, with any credentials removed. */
 function target(): string {
-  const url = process.env.DATABASE_URL;
-  if (!url) return "no DATABASE_URL";
+  const resolved = resolveDatabaseUrl();
+  if (!resolved) return "no connection string set";
   try {
-    const { hostname, port } = new URL(url);
-    return `${hostname}:${port || "5432"}`;
+    const { hostname, port } = new URL(resolved.url);
+    return `${hostname}:${port || "5432"} (from ${resolved.source})`;
   } catch {
-    return "DATABASE_URL is not a valid URL";
+    return `${resolved.source} is not a valid URL`;
   }
 }
 
 /** Migrations on disk that the database has not recorded as applied. */
 async function pendingMigrations(): Promise<Check | null> {
-  const url = process.env.DATABASE_URL;
+  const url = resolveDatabaseUrl()?.url;
   if (!url) return null;
 
   const files = readdirSync(join(process.cwd(), "db", "migrations"))
