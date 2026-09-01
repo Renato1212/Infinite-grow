@@ -74,8 +74,12 @@ export function classifyDbError(err: unknown): string {
   // a code, and it is the single most likely failure against a hosted server.
   // Supavisor answers an unknown tenant with this rather than a Postgres code,
   // and it means the username is wrong, not the password.
-  if (/Tenant or user not found/i.test(raw))
-    return "the pooler did not recognise the username — it must be postgres.<project-ref>";
+  // Two different mistakes produce this, and naming only one sends people to
+  // check a part that is already correct. The numeric prefix on the pooler host
+  // varies per project, so a host copied from an example rather than from the
+  // dashboard fails here exactly as a wrong username does.
+  if (/Tenant or user not found|tenant\/user .* not found|ENOTFOUND/i.test(raw))
+    return "the pooler does not recognise this tenant — either the username is not postgres.<project-ref>, or the host is the wrong pooler (its aws-N prefix and region must come from the dashboard, not from an example)";
   // Repeated bad passwords trip Supavisor's breaker, which then rejects even a
   // correct one for a few minutes. Worth naming: it makes a fix that already
   // works look like it failed, and the obvious response is to change the

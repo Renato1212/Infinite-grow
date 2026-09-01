@@ -61,8 +61,13 @@ short-lived instances, and the app is already compatible (`prepare: false`, and
 every query runs inside one transaction, so nothing depends on session state):
 
 ```
-DATABASE_URL=postgresql://postgres.zggckkxrnaysruvcmqng:YOUR-PASSWORD@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql://postgres.zggckkxrnaysruvcmqng:YOUR-PASSWORD@aws-N-eu-west-3.pooler.supabase.com:6543/postgres
 ```
+
+**Copy the host from the dashboard rather than from the line above.** The `aws-N`
+prefix is assigned per project — it is not always `aws-0` — and a host taken from
+an example instead of from **Connect → Transaction pooler** fails with
+`tenant/user … not found`, which reads like a username problem and is not one.
 
 Use port **5432** (session pooler) when running migrations or the seed from your
 own machine; DDL is happier there.
@@ -180,7 +185,7 @@ Once `DATABASE_URL` is set, the same suites that run in development run against
 Supabase:
 
 ```bash
-DATABASE_URL='postgresql://postgres.zggckkxrnaysruvcmqng:...@aws-0-eu-west-3.pooler.supabase.com:5432/postgres' npm test
+DATABASE_URL='postgresql://postgres.zggckkxrnaysruvcmqng:...@<your-pooler-host>:5432/postgres' npm test
 ```
 
 That adds `tests/rls.test.ts` (a second user sees nothing) and

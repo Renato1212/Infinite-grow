@@ -207,7 +207,17 @@ describe("connection string shape", () => {
 });
 
 describe("classifyDbError, pooler cases", () => {
-  it("blames the username when the pooler rejects the tenant", () => {
-    expect(classifyDbError(new Error("Tenant or user not found"))).toMatch(/username/);
+  it("names both causes when the pooler rejects the tenant", () => {
+    // Supavisor words this two ways, and either the username or the pooler
+    // host can be at fault. Naming only the username sent this project's
+    // owner to re-check a part that was already right.
+    for (const message of [
+      "Tenant or user not found",
+      "(ENOTFOUND) tenant/user postgres.abcdef not found",
+    ]) {
+      const said = classifyDbError(new Error(message));
+      expect(said).toMatch(/username/);
+      expect(said).toMatch(/host/);
+    }
   });
 });
