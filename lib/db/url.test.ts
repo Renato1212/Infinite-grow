@@ -50,6 +50,42 @@ describe("resolveDatabaseUrl", () => {
       .toBe("POSTGRES_URL");
   });
 
+  it("skips a DATABASE_URL that still holds the placeholder", () => {
+    // The failure this actually caused: the integration had set a working
+    // POSTGRES_URL, and a half-pasted DATABASE_URL outranked it, so a correct
+    // setup kept reporting the same error.
+    const resolved = resolveDatabaseUrl({
+      DATABASE_URL: "postgresql://postgres.ref:[YOUR-PASSWORD]@host:6543/postgres",
+      POSTGRES_URL: DB,
+    });
+    expect(resolved).toEqual({ url: DB, source: "POSTGRES_URL" });
+  });
+
+  it("skips a DATABASE_URL that is not a URL at all", () => {
+    expect(resolveDatabaseUrl({ DATABASE_URL: "paste your string here", POSTGRES_URL: DB })?.source)
+      .toBe("POSTGRES_URL");
+  });
+
+  it("still reports an unusable value when it is the only one", () => {
+    // Reporting "DATABASE_URL still contains the placeholder" beats reporting
+    // that nothing is configured, which would be false.
+    const only = "postgresql://postgres.ref:[YOUR-PASSWORD]@host:6543/postgres";
+    expect(resolveDatabaseUrl({ DATABASE_URL: only })).toEqual({
+      url: only,
+      source: "DATABASE_URL",
+    });
+  });
+
+  it("prefers the assembled parts over an unusable whole URL", () => {
+    const resolved = resolveDatabaseUrl({
+      DATABASE_URL: "postgresql://postgres.ref:[YOUR-PASSWORD]@host:6543/postgres",
+      POSTGRES_USER: "postgres.ref",
+      POSTGRES_PASSWORD: "pw",
+      POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
+    });
+    expect(resolved?.source).toBe("POSTGRES_USER/PASSWORD/HOST");
+  });
+
   it("returns null when nothing is configured", () => {
     expect(resolveDatabaseUrl({})).toBeNull();
   });

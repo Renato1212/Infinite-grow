@@ -12,6 +12,12 @@
  * Order matters. A hand-set DATABASE_URL wins, because someone chose it
  * deliberately. The pooled URLs come next; the non-pooling one is last because
  * it resolves over IPv6, which serverless platforms commonly cannot reach.
+ *
+ * "Deliberately" is the operative word: a string still carrying the dashboard's
+ * [YOUR-PASSWORD] placeholder was not chosen, it was half-pasted, and letting
+ * it outrank a working value from the integration is how a correct setup stays
+ * broken. Unusable candidates are skipped, and only reported if nothing else
+ * works — the report is still better than "nothing is set".
  */
 export interface Resolved {
   url: string;
@@ -29,13 +35,28 @@ const CANDIDATES = [
 /** Every variable that could carry a connection string, for error messages. */
 export const CONNECTION_VARIABLES = [...CANDIDATES] as readonly string[];
 
+/** A value that cannot possibly connect, however deliberately it was set. */
+function unusable(url: string): boolean {
+  if (/\[YOUR-PASSWORD\]/i.test(url)) return true;
+  try {
+    new URL(url);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 export function resolveDatabaseUrl(
   env: Record<string, string | undefined> = process.env,
 ): Resolved | null {
+  const present: Resolved[] = [];
   for (const name of CANDIDATES) {
     const value = env[name]?.trim();
-    if (value) return { url: value, source: name };
+    if (value) present.push({ url: value, source: name });
   }
+
+  const workable = present.find((c) => !unusable(c.url));
+  if (workable) return workable;
 
   // The integration also writes the parts separately. Assembling them is the
   // last resort but the most forgiving: nothing here has to be escaped by
@@ -51,5 +72,7 @@ export function resolveDatabaseUrl(
     };
   }
 
-  return null;
+  // Nothing workable and no parts. Hand back the first thing that was set, so
+  // the shape check can name what is wrong with it.
+  return present[0] ?? null;
 }
