@@ -75,12 +75,19 @@ not one. If the project is ever moved or recreated, take the host from
 
 The four variables, then, are:
 
-| Variable | Value |
-|---|---|
-| `POSTGRES_USER` | `postgres.zggckkxrnaysruvcmqng` |
-| `POSTGRES_PASSWORD` | from **Project Settings → Database** — no escaping needed, the code escapes it |
-| `POSTGRES_HOST` | `aws-1-eu-west-3.pooler.supabase.com:6543` |
-| `POSTGRES_DATABASE` | `postgres` |
+| Variable | Value | Required? |
+|---|---|---|
+| `POSTGRES_HOST` | `aws-1-eu-west-3.pooler.supabase.com:6543` | yes |
+| `POSTGRES_PASSWORD` | from **Project Settings → Database** — paste it raw, the code escapes it | yes |
+| `POSTGRES_USER` | `postgres.zggckkxrnaysruvcmqng` | no — derived from `NEXT_PUBLIC_SUPABASE_URL` |
+| `POSTGRES_DATABASE` | `postgres` | no — defaults to `postgres` |
+
+Only the first two have to be set. The pooler username is `postgres.` plus the
+project ref, and the ref is already in `NEXT_PUBLIC_SUPABASE_URL`, which auth
+needs anyway; asking for it twice is asking for it to be mistyped once. The
+derivation only applies to a `pooler.supabase.com` host — anywhere else the
+username is unguessable, and inventing one would turn a clear "not set" into a
+puzzling rejection.
 
 Or as one string in `DATABASE_URL`, in which case the password *does* need
 `@ : / ? # % &` and spaces percent-encoded:

@@ -23,6 +23,37 @@ describe("resolveDatabaseUrl", () => {
     expect(resolved?.source).toBe("POSTGRES_PRISMA_URL");
   });
 
+  it("derives the username from the Supabase URL the app already needs", () => {
+    // The project ref is in NEXT_PUBLIC_SUPABASE_URL, so asking for
+    // POSTGRES_USER as well is asking someone to retype a value we have —
+    // and a chance to mistype it.
+    const resolved = resolveDatabaseUrl({
+      NEXT_PUBLIC_SUPABASE_URL: "https://zggckkxrnaysruvcmqng.supabase.co",
+      POSTGRES_PASSWORD: "pw",
+      POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
+    });
+    expect(resolved?.url).toContain("postgres.zggckkxrnaysruvcmqng:pw@");
+  });
+
+  it("prefers an explicit username over the derived one", () => {
+    const resolved = resolveDatabaseUrl({
+      NEXT_PUBLIC_SUPABASE_URL: "https://zggckkxrnaysruvcmqng.supabase.co",
+      POSTGRES_USER: "someone.else",
+      POSTGRES_PASSWORD: "pw",
+      POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
+    });
+    expect(resolved?.url).toContain("someone.else:pw@");
+  });
+
+  it("does not invent a username for a non-Supabase host", () => {
+    // Guessing there would swap a clear "not set" for a puzzling rejection.
+    expect(resolveDatabaseUrl({
+      NEXT_PUBLIC_SUPABASE_URL: "https://zggckkxrnaysruvcmqng.supabase.co",
+      POSTGRES_PASSWORD: "pw",
+      POSTGRES_HOST: "db.example.com:5432",
+    })).toBeNull();
+  });
+
   it("assembles the parts when no whole URL is set", () => {
     const resolved = resolveDatabaseUrl({
       POSTGRES_USER: "postgres.ref",
@@ -83,7 +114,7 @@ describe("resolveDatabaseUrl", () => {
       POSTGRES_PASSWORD: "pw",
       POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
     });
-    expect(resolved?.source).toBe("POSTGRES_USER/PASSWORD/HOST");
+    expect(resolved?.source).toBe("POSTGRES_PASSWORD/HOST");
   });
 
   it("names which parts are set when the set is incomplete", () => {

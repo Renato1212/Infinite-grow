@@ -56,7 +56,40 @@ export function connectionVariablesPresent(
 ): { present: string[]; missing: string[] } {
   const all = [...CANDIDATES, ...PARTS];
   const present = all.filter((name) => (env[name]?.trim() ?? "") !== "");
-  return { present, missing: all.filter((name) => !present.includes(name)) };
+  // POSTGRES_USER and POSTGRES_DATABASE are derived or defaulted, so listing
+  // them as missing sends people to set things that do not need setting. Only
+  // report what actually has to come from a human.
+  const derivable = new Set(["POSTGRES_USER", "POSTGRES_DATABASE"]);
+  const needed = all.filter((name) => !derivable.has(name) || !databaseUser(env));
+  return {
+    present,
+    missing: needed.filter((name) => !present.includes(name)),
+  };
+}
+
+/**
+ * The database username, derived when it was not set.
+ *
+ * Supabase's shared pooler authenticates as `postgres.<project-ref>`, and the
+ * project ref is already in NEXT_PUBLIC_SUPABASE_URL, which the app needs for
+ * auth regardless. There is no reason to make anyone type it a second time —
+ * and typing it a second time is a chance to get it wrong.
+ *
+ * Only derived for a Supabase pooler host: elsewhere the username is not
+ * predictable, and inventing one would replace a clear "not set" with a
+ * confusing rejection.
+ */
+export function databaseUser(env: Record<string, string | undefined>): string | undefined {
+  const explicit = env.POSTGRES_USER?.trim();
+  if (explicit) return explicit;
+  if (!env.POSTGRES_HOST?.includes("pooler.supabase.com")) return undefined;
+
+  try {
+    const ref = new URL(env.NEXT_PUBLIC_SUPABASE_URL ?? "").hostname.split(".")[0];
+    return ref ? `postgres.${ref}` : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** A value that cannot possibly connect, however deliberately it was set. */
@@ -85,14 +118,15 @@ export function resolveDatabaseUrl(
   // The integration also writes the parts separately. Assembling them is the
   // last resort but the most forgiving: nothing here has to be escaped by
   // hand, so a password full of reserved characters cannot break the URL.
-  const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_DATABASE } = env;
-  if (POSTGRES_USER && POSTGRES_PASSWORD && POSTGRES_HOST) {
-    const user = encodeURIComponent(POSTGRES_USER);
-    const password = encodeURIComponent(POSTGRES_PASSWORD);
+  const { POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_DATABASE } = env;
+  const user = databaseUser(env);
+  if (user && POSTGRES_PASSWORD && POSTGRES_HOST) {
     const database = POSTGRES_DATABASE || "postgres";
     return {
-      url: `postgresql://${user}:${password}@${POSTGRES_HOST}/${database}`,
-      source: "POSTGRES_USER/PASSWORD/HOST",
+      url: `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(
+        POSTGRES_PASSWORD,
+      )}@${POSTGRES_HOST}/${database}`,
+      source: "POSTGRES_PASSWORD/HOST",
     };
   }
 
