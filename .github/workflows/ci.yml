@@ -1,0 +1,147 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, unit and database tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: journal
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/journal
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Apply migrations
+        run: npm run db:push
+
+      - name: Migrations are idempotent
+        run: npm run db:push
+
+      - name: Schema is what we think it is
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "
+            do \$\$
+            declare tables int; views int; policies int; unprotected int;
+            begin
+              select count(*) into tables from information_schema.tables
+                where table_schema='public' and table_type='BASE TABLE'
+                  and table_name <> 'schema_migrations';
+              select count(*) into views from pg_views where schemaname='public';
+              select count(*) into policies from pg_policies where schemaname='public';
+              select count(*) into unprotected from pg_tables
+                where schemaname='public' and not rowsecurity
+                  and tablename <> 'schema_migrations';
+              raise notice 'tables=% views=% policies=%', tables, views, policies;
+              assert unprotected = 0, format('% public tables without RLS', unprotected);
+              assert policies = tables * 4, format('expected 4 policies per table, got %', policies);
+            end \$\$;"
+
+      - name: Tests, including RLS and SQL/TS parity
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+
+  e2e:
+    name: Daily loop and accessibility
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: journal
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/journal
+      # A fixed id so the seed, the app and the tests all agree on whose data
+      # this is, without parsing it back out of the seed's output.
+      DEV_USER_ID: 00000000-0000-0000-0000-0000000000aa
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Apply migrations
+        run: npm run db:push
+
+      - name: Create the account the app signs in as
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c \
+            "insert into auth.users (id, email) values ('$DEV_USER_ID', 'ci@example.invalid')
+             on conflict (id) do nothing;"
+
+      - name: Seed a book to test against
+        run: npm run db:seed
+        env:
+          SEED_USER_ID: ${{ env.DEV_USER_ID }}
+
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Chromium system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Daily loop and accessibility
+        run: npx playwright test
+        env:
+          CI: "true"
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

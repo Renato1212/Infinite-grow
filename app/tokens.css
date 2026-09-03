@@ -1,0 +1,169 @@
+/* ── Design tokens ────────────────────────────────────────────────────────────
+   One accent. A near-achromatic ramp with a slight cool cast. Dark is a
+   recomputed ramp, not an inversion — the mid steps are lifted so text on
+   elevated surfaces still clears 4.5:1.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* Grey ramp — 1 is the page, 12 is the strongest text */
+  --g1:  #fcfcfd;
+  --g2:  #f7f8fa;
+  --g3:  #f1f2f5;
+  --g4:  #e9ebef;
+  --g5:  #e0e3e8;
+  --g6:  #d3d7de;
+  --g7:  #bfc4cd;
+  --g8:  #9aa1ad;
+  --g9:  #646b77;
+  --g10: #4a515c;
+  --g11: #3f454e;
+  --g12: #14171c;
+
+  --bg:            var(--g1);
+  --bg-subtle:     var(--g2);
+  --bg-raised:     #ffffff;
+  --bg-sunken:     var(--g3);
+  --bg-hover:      rgb(20 23 28 / 0.035);
+  --bg-active:     rgb(20 23 28 / 0.05);
+
+  --text:          var(--g12);
+  --text-secondary:var(--g10);
+  --text-tertiary: var(--g9);
+  --text-on-accent:#ffffff;
+
+  --line:          rgb(20 23 28 / 0.08);
+  --line-strong:   rgb(20 23 28 / 0.14);
+
+  --accent:        #2559cc;
+  --accent-hover:  #1f4bb0;
+  --accent-quiet:  rgb(37 89 204 / 0.08);
+  --accent-line:   rgb(37 89 204 / 0.30);
+  --focus:         #2559cc;
+
+  --pos:           #2b7050;
+  --pos-quiet:     rgb(43 112 80 / 0.08);
+  --neg:           #a33b3b;
+  --neg-quiet:     rgb(163 59 59 / 0.08);
+  --warn:          #825d1e;
+  --warn-quiet:    rgb(130 93 30 / 0.08);
+
+  /* Edge domains — low chroma, only ever a dot or a 2px rule */
+  --dom-economic_data:    #b08028;
+  --dom-central_banks:    #7a63b8;
+  --dom-technicals:       #2f7f83;
+  --dom-flow_events:      #5b6f9c;
+  --dom-unscheduled_news: #ab6249;
+
+  --shadow-raised: 0 8px 24px -12px rgb(10 12 16 / 0.18), 0 1px 2px rgb(10 12 16 / 0.05);
+
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+               "Inter", system-ui, "Segoe UI", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", ui-monospace, "Menlo", monospace;
+
+  --t-11: 0.6875rem; --t-12: 0.75rem;  --t-13: 0.8125rem; --t-15: 0.9375rem;
+  --t-17: 1.0625rem; --t-20: 1.25rem;  --t-24: 1.5rem;    --t-32: 2rem;
+
+  /* Space — 8pt grid */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+  --r-input: 8px; --r-std: 10px; --r-lg: 14px; --r-pill: 999px;
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --d-fast: 180ms; --d-base: 220ms; --d-slow: 260ms;
+
+  --content-max: 1200px;
+}
+
+:root[data-theme="dark"],
+:root:not([data-theme="light"]) {
+  /* placeholder so the cascade order is explicit; real values below */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* Dark ramp, recomputed. Kept in one block and applied under both selectors. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --g1:  #0c0e11;
+    --g2:  #111418;
+    --g3:  #161a1f;
+    --g4:  #1c2127;
+    --g5:  #232930;
+    --g6:  #2c333b;
+    --g7:  #3a424c;
+    --g8:  #545d68;
+    --g9:  #8d95a0;
+    --g10: #9aa3ae;
+    --g11: #c6ccd4;
+    --g12: #f2f4f7;
+
+    --bg: var(--g1);
+    --bg-subtle: var(--g2);
+    --bg-raised: var(--g3);
+    --bg-sunken: #080a0c;
+    --bg-hover: rgb(255 255 255 / 0.045);
+    --bg-active: rgb(255 255 255 / 0.075);
+
+    --text: var(--g12);
+    --text-secondary: var(--g10);
+    --text-tertiary: var(--g9);
+
+    --line: rgb(255 255 255 / 0.09);
+    --line-strong: rgb(255 255 255 / 0.16);
+
+    --accent: #749eff;
+    --accent-hover: #8fb2ff;
+    --accent-quiet: rgb(116 158 255 / 0.10);
+    --accent-line: rgb(116 158 255 / 0.36);
+    --focus: #8fb2ff;
+    --text-on-accent: #06101f;
+
+    --pos: #66af90;
+    --pos-quiet: rgb(102 175 144 / 0.10);
+    --neg: #e08787;
+    --neg-quiet: rgb(224 135 135 / 0.10);
+    --warn: #c9a45c;
+    --warn-quiet: rgb(201 164 92 / 0.10);
+
+    --dom-economic_data:    #cfa254;
+    --dom-central_banks:    #a68fdd;
+    --dom-technicals:       #56aaad;
+    --dom-flow_events:      #8b9dc8;
+    --dom-unscheduled_news: #cd8a70;
+
+    --shadow-raised: 0 10px 30px -14px rgb(0 0 0 / 0.7), 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --g1:  #0c0e11; --g2:  #111418; --g3:  #161a1f; --g4:  #1c2127;
+  --g5:  #232930; --g6:  #2c333b; --g7:  #3a424c; --g8:  #545d68;
+  --g9:  #8d95a0; --g10: #9aa3ae; --g11: #c6ccd4; --g12: #f2f4f7;
+
+  --bg: var(--g1); --bg-subtle: var(--g2); --bg-raised: var(--g3); --bg-sunken: #080a0c;
+  --bg-hover: rgb(255 255 255 / 0.045); --bg-active: rgb(255 255 255 / 0.075);
+
+  --text: var(--g12); --text-secondary: var(--g10); --text-tertiary: var(--g9);
+  --line: rgb(255 255 255 / 0.09); --line-strong: rgb(255 255 255 / 0.16);
+
+  --accent: #749eff; --accent-hover: #8fb2ff;
+  --accent-quiet: rgb(116 158 255 / 0.10); --accent-line: rgb(116 158 255 / 0.36);
+  --focus: #8fb2ff; --text-on-accent: #06101f;
+
+  --pos: #66af90; --pos-quiet: rgb(102 175 144 / 0.10);
+  --neg: #e08787; --neg-quiet: rgb(224 135 135 / 0.10);
+  --warn: #c9a45c; --warn-quiet: rgb(201 164 92 / 0.10);
+
+  --dom-economic_data: #cfa254; --dom-central_banks: #a68fdd;
+  --dom-technicals: #56aaad; --dom-flow_events: #8b9dc8;
+  --dom-unscheduled_news: #cd8a70;
+
+  --shadow-raised: 0 10px 30px -14px rgb(0 0 0 / 0.7), 0 1px 2px rgb(0 0 0 / 0.4);
+}
