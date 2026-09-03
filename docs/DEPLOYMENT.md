@@ -61,12 +61,33 @@ password with a `#` in it that silently truncates the URL.
 itself. A hand-set `DATABASE_URL` always wins, and the non-pooling URL is last
 because it resolves over IPv6, which serverless platforms commonly cannot reach.
 
-**By hand, if you prefer.** Supabase dashboard → **Connect** → **Transaction
-pooler**, and copy that string — including its host, whose `aws-N` prefix is
-assigned per project. Replace `[YOUR-PASSWORD]`, brackets and all, with the
-password from **Project Settings → Database** (reset it there if you no longer
-have it). Percent-encode `@ : / ? # % &` and spaces, or choose a password of
-letters and digits only.
+**By hand.** This project's pooler host, read from its own Connect dialog, is:
+
+```
+aws-1-eu-west-3.pooler.supabase.com:6543
+```
+
+Note `aws-1`, not `aws-0`. The prefix is assigned per project and is not
+guessable; an earlier draft of this file printed `aws-0` and cost days of
+`(ENOTFOUND) tenant/user … not found`, which reads like a username fault and is
+not one. If the project is ever moved or recreated, take the host from
+**Connect → Transaction pooler** again rather than from here.
+
+The four variables, then, are:
+
+| Variable | Value |
+|---|---|
+| `POSTGRES_USER` | `postgres.zggckkxrnaysruvcmqng` |
+| `POSTGRES_PASSWORD` | from **Project Settings → Database** — no escaping needed, the code escapes it |
+| `POSTGRES_HOST` | `aws-1-eu-west-3.pooler.supabase.com:6543` |
+| `POSTGRES_DATABASE` | `postgres` |
+
+Or as one string in `DATABASE_URL`, in which case the password *does* need
+`@ : / ? # % &` and spaces percent-encoded:
+
+```
+postgresql://postgres.zggckkxrnaysruvcmqng:PASSWORD@aws-1-eu-west-3.pooler.supabase.com:6543/postgres
+```
 
 ### 2. The rest of the environment variables
 
