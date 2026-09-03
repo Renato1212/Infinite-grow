@@ -32,8 +32,32 @@ const CANDIDATES = [
   "POSTGRES_URL_NON_POOLING",
 ] as const;
 
+/** The pieces the integration writes separately, assembled as a last resort. */
+const PARTS = [
+  "POSTGRES_USER",
+  "POSTGRES_PASSWORD",
+  "POSTGRES_HOST",
+  "POSTGRES_DATABASE",
+] as const;
+
 /** Every variable that could carry a connection string, for error messages. */
 export const CONNECTION_VARIABLES = [...CANDIDATES] as readonly string[];
+
+/**
+ * Which of the variables are set, by name only.
+ *
+ * When nothing resolves, "no connection string is set" is true but useless: it
+ * cannot distinguish a project with none of them from one where POSTGRES_HOST
+ * is set and POSTGRES_PASSWORD was missed. Names and presence are not secrets,
+ * so reporting them turns one round trip into an answer. Values never appear.
+ */
+export function connectionVariablesPresent(
+  env: Record<string, string | undefined> = process.env,
+): { present: string[]; missing: string[] } {
+  const all = [...CANDIDATES, ...PARTS];
+  const present = all.filter((name) => (env[name]?.trim() ?? "") !== "");
+  return { present, missing: all.filter((name) => !present.includes(name)) };
+}
 
 /** A value that cannot possibly connect, however deliberately it was set. */
 function unusable(url: string): boolean {

@@ -14,7 +14,7 @@
  */
 import postgres from "postgres";
 import { isLocalHost, sslFor } from "./db/ssl";
-import { CONNECTION_VARIABLES, resolveDatabaseUrl } from "./db/url";
+import { CONNECTION_VARIABLES, connectionVariablesPresent, resolveDatabaseUrl } from "./db/url";
 
 export type Status = "ok" | "warn" | "fail";
 
@@ -217,11 +217,18 @@ export function checkConnectionShape(
 async function databaseChecks(): Promise<Check[]> {
   const resolved = resolveDatabaseUrl();
   if (!resolved) {
+    // Say which variables the deployment can actually see. "None of them are
+    // set" reads the same whether nothing was configured or one of four parts
+    // was missed, and those need opposite fixes.
+    const { present, missing } = connectionVariablesPresent();
+    const seen = present.length
+      ? `Set here: ${present.join(", ")}. Not set: ${missing.join(", ")}.`
+      : `None of ${CONNECTION_VARIABLES.join(", ")} are set.`;
     return [
       {
         name: "Database",
         status: "fail",
-        detail: `No connection string is set — none of ${CONNECTION_VARIABLES.join(", ")}.`,
+        detail: `No usable connection string. ${seen}`,
         // The integration is the easier of the two, because it fills in the
         // host and password itself; assembling the string by hand is what
         // every failure here has come from.

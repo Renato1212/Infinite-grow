@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveDatabaseUrl } from "./url";
+import { connectionVariablesPresent, resolveDatabaseUrl } from "./url";
 
 const DB = "postgresql://postgres.ref:pw@aws-1-eu-west-3.pooler.supabase.com:6543/postgres";
 
@@ -84,6 +84,22 @@ describe("resolveDatabaseUrl", () => {
       POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
     });
     expect(resolved?.source).toBe("POSTGRES_USER/PASSWORD/HOST");
+  });
+
+  it("names which parts are set when the set is incomplete", () => {
+    // The case this exists for: three of the four parts present, so nothing
+    // resolves, and "none are set" would be false and send you the wrong way.
+    const { present, missing } = connectionVariablesPresent({
+      POSTGRES_USER: "postgres.ref",
+      POSTGRES_HOST: "aws-1-eu-west-3.pooler.supabase.com:6543",
+      POSTGRES_DATABASE: "postgres",
+    });
+    expect(present).toEqual(["POSTGRES_USER", "POSTGRES_HOST", "POSTGRES_DATABASE"]);
+    expect(missing).toContain("POSTGRES_PASSWORD");
+  });
+
+  it("treats a blank value as not set", () => {
+    expect(connectionVariablesPresent({ POSTGRES_HOST: "   " }).present).toEqual([]);
   });
 
   it("returns null when nothing is configured", () => {
